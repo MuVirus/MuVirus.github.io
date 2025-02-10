@@ -47,7 +47,7 @@
 
 <p>在浏览器上将这里面的 createCode 函数只写一个 return true;即可，然后填上信息，让 burpsuite 来拦截。</p>
 <p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738029139419-1cdd8aca-6da5-4008-be04-1820b582f36a.png"></p>
-<h1 id="token-防爆破？"><a href="#token-防爆破？" class="headerlink" title="token 防爆破？"></a>token 防爆破？</h1><p><img src="/../../img/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738030434932-9d57aa47-e9a5-481b-82e1-4070dd830631.png"></p>
+<h1 id="token-防爆破？"><a href="#token-防爆破？" class="headerlink" title="token 防爆破？"></a>token 防爆破？</h1><p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738030434932-9d57aa47-e9a5-481b-82e1-4070dd830631.png"></p>
 <p>在浏览器定位 Login 按钮，发现上方还有这个隐藏（hidden）的输入消息，这里面的 value 值每次刷新都会改变，没看到 js 的代码，应该是服务器自己给的。</p>
 <p>我们通过 burpsuite 拦截一下。</p>
 <p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738030588852-0e5a3b09-62b3-46c1-9464-4028bcba1f56.png"></p>
