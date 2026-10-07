@@ -3,7 +3,7 @@ name: Deploy Quartz to GitHub Pages
 on:
   push:
     branches:
-      - quartz          # 你的 Quartz 分支名
+      - main          # 你的 Quartz 分支名
   workflow_dispatch:    # 允许手动触发
 
 permissions:
